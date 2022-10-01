@@ -1,0 +1,39 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cv.user.api.common;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * @author WSwe
+ */
+@Slf4j
+public class Util1 {
+
+    public static String toDateStr(Date date, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        String strDate = null;
+
+        try {
+            strDate = formatter.format(date);
+        } catch (Exception ex) {
+            System.out.println("toDateStr Error : " + ex.getMessage());
+        }
+
+        return strDate;
+    }
+
+    public static Date getTodayDate() {
+        return Calendar.getInstance().getTime();
+    }
+    public static boolean isNullOrEmpty(Object obj) {
+        return obj == null || obj.toString().isEmpty();
+    }
+
+}
