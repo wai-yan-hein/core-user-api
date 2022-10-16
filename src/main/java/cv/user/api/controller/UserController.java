@@ -56,6 +56,8 @@ public class UserController {
     private SystemPropertyRepo systemPropertyRepo;
     @Autowired
     private MacPropertyRepo macPropertyRepo;
+    @Autowired
+    private DepartmentRepo departmentRepo;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -277,9 +279,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-property")
-    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode,
-                                                               @RequestParam String roleCode,
-                                                               @RequestParam Integer macId) {
+    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode, @RequestParam String roleCode, @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
@@ -363,4 +363,8 @@ public class UserController {
         }
     }
 
+    @GetMapping(path = "/get-department")
+    public ResponseEntity<?> getDepartment() {
+        return ResponseEntity.ok(departmentRepo.findAll());
+    }
 }
