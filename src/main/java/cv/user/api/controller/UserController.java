@@ -249,9 +249,7 @@ public class UserController {
 
     @PostMapping("/save-system-property")
     public ResponseEntity<SystemProperty> saveSystemProperty(@RequestBody SystemProperty property) {
-        if (!Objects.isNull(property.getPropKey()) && !Objects.isNull(property.getCompCode())) {
-            property = systemPropertyRepo.save(property);
-        }
+        property = systemPropertyRepo.save(property);
         return ResponseEntity.ok(property);
     }
 
@@ -273,6 +271,12 @@ public class UserController {
         return ResponseEntity.ok(systemPropertyRepo.getSystemProperty(compCode));
     }
 
+    @PostMapping("/find-system-property")
+    public ResponseEntity<?> findSysProperty(@RequestBody PropertyKey key) {
+        Optional<SystemProperty> p = systemPropertyRepo.findById(key);
+        return ResponseEntity.ok(p.orElse(null));
+    }
+
     @GetMapping("/get-mac-property")
     public ResponseEntity<List<MachineProperty>> getMacProperty(@RequestParam Integer macId) {
         return ResponseEntity.ok(macPropertyRepo.getMacProperty(macId));
@@ -284,7 +288,7 @@ public class UserController {
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
             for (SystemProperty p : systemProperty) {
-                hm.put(p.getPropKey(), p.getPropValue());
+                hm.put(p.getKey().getPropKey(), p.getPropValue());
             }
         }
 
