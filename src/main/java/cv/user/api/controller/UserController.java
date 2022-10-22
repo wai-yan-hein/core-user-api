@@ -74,7 +74,7 @@ public class UserController {
     @GetMapping("/get-mac-info")
     public ResponseEntity<MachineInfo> getMacInfo(@RequestParam String macName) {
         MachineInfo mac = new MachineInfo();
-        mac.setMacId(0);
+        mac.setMacId(1);
         List<MachineInfo> byName = machineInfoRepo.findByName(macName);
         if (!byName.isEmpty()) {
             mac = byName.get(0);
