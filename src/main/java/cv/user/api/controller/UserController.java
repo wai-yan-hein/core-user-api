@@ -1,6 +1,7 @@
 package cv.user.api.controller;
 
 import cv.user.api.common.ReturnObject;
+import cv.user.api.common.Util1;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
 import cv.user.api.service.AppUserService;
@@ -172,8 +173,8 @@ public class UserController {
     }
 
     @GetMapping("/get-report")
-    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode) {
-        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode));
+    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass) {
+        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-")));
     }
 
     @GetMapping("/get-role")

@@ -15,6 +15,6 @@ public interface VRoleMenuRepo extends JpaRepository<VRoleMenu, String> {
     @Query("select o from VRoleMenu o where o.roleCode = :role_code and o.parentMenuCode = :parent order by o.orderBy")
     List<VRoleMenu> getMenu(@Param("role_code") String roleCode, @Param("parent") String parentCode);
 
-    @Query("select o from VRoleMenu o where o.roleCode = :role_code  and o.menuType = 'Report' order by o.menuName")
-    List<VRoleMenu> getReport(@Param("role_code") String roleCode);
+    @Query("select o from VRoleMenu o where o.roleCode = :role_code  and o.menuType = 'Report' and (o.menuClass=:menu_class or '-' = :menu_class) order by o.menuName")
+    List<VRoleMenu> getReport(@Param("role_code") String roleCode, @Param("menu_class") String menuClass);
 }

@@ -15,7 +15,15 @@ import java.util.Date;
  */
 @Slf4j
 public class Util1 {
-
+    public static String isNull(String strValue, String value) {
+        if (strValue == null) {
+            return value;
+        } else if (strValue.isEmpty()) {
+            return value;
+        } else {
+            return strValue;
+        }
+    }
     public static String toDateStr(Date date, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         String strDate = null;
