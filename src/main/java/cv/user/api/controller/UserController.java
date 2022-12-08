@@ -75,11 +75,10 @@ public class UserController {
     @GetMapping("/get-mac-info")
     public ResponseEntity<MachineInfo> getMacInfo(@RequestParam String macName) {
         MachineInfo mac = new MachineInfo();
-        mac.setMacId(1);
+        mac.setMacId(0);
         List<MachineInfo> byName = machineInfoRepo.findByName(macName);
         if (!byName.isEmpty()) {
             mac = byName.get(0);
-
         }
         return ResponseEntity.ok(mac);
     }
@@ -104,8 +103,7 @@ public class UserController {
 
     @PostMapping("/save-mac")
     public ResponseEntity<MachineInfo> saveMacInfo(@RequestBody MachineInfo machineInfo) {
-        machineInfo = machineInfoRepo.save(machineInfo);
-        return ResponseEntity.ok(machineInfo);
+        return ResponseEntity.ok(machineInfoRepo.save(machineInfo));
     }
 
     @PostMapping("/save-user")
@@ -116,8 +114,7 @@ public class UserController {
 
     @PostMapping("/save-privilege-company")
     public ResponseEntity<PrivilegeCompany> savePC(@RequestBody PrivilegeCompany c) {
-        c = privilegeCompanyRepo.save(c);
-        return ResponseEntity.ok(c);
+        return ResponseEntity.ok(c = privilegeCompanyRepo.save(c));
     }
 
     @GetMapping("/get-privilege-company")
@@ -371,5 +368,10 @@ public class UserController {
     @GetMapping(path = "/get-department")
     public ResponseEntity<?> getDepartment() {
         return ResponseEntity.ok(departmentRepo.findAll());
+    }
+    @GetMapping("/find-department")
+    public ResponseEntity<Department> findDepartment(@RequestParam Integer deptId) {
+        Optional<Department> byId = departmentRepo.findById(deptId);
+        return ResponseEntity.ok(byId.orElse(null));
     }
 }
