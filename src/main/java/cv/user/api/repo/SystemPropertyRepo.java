@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SystemPropertyRepo extends JpaRepository<SystemProperty, PropertyKey> {
-    @Query("select o from SystemProperty o where o.key.compCode =:compCode ")
+    @Query("select o from SystemProperty o where o.key.compCode =:compCode or '-' = :compCode ")
     List<SystemProperty> getSystemProperty(@Param("compCode") String compCode);
 }

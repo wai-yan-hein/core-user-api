@@ -281,7 +281,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-property")
-    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode, @RequestParam String roleCode, @RequestParam Integer macId) {
+    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode,
+                                                               @RequestParam String roleCode,
+                                                               @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
@@ -369,9 +371,15 @@ public class UserController {
     public ResponseEntity<?> getDepartment() {
         return ResponseEntity.ok(departmentRepo.findAll());
     }
+
     @GetMapping("/find-department")
     public ResponseEntity<Department> findDepartment(@RequestParam Integer deptId) {
         Optional<Department> byId = departmentRepo.findById(deptId);
         return ResponseEntity.ok(byId.orElse(null));
+    }
+
+    @PostMapping("/save-department")
+    public ResponseEntity<?> saveDepartment(@RequestBody Department department) {
+        return ResponseEntity.ok(departmentRepo.save(department));
     }
 }
