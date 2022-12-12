@@ -16,6 +16,8 @@ public class Department {
     private String userCode;
     @Column(name = "dept_name")
     private String deptName;
-    @Column(name = "queue_name")
-    private String queueName;
+    @Column(name = "inv_queue")
+    private String inventoryQ;
+    @Column(name = "acc_queue")
+    private String accountQ;
 }
