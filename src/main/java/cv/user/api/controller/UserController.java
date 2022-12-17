@@ -152,7 +152,7 @@ public class UserController {
 
     @GetMapping("/get-menu-parent")
     public ResponseEntity<List<Menu>> getMenuParent() {
-        List<Menu> menus = menuRepo.findAll();
+        List<Menu> menus = menuRepo.getMenu("AllCash");
         return ResponseEntity.ok(menus);
     }
 
