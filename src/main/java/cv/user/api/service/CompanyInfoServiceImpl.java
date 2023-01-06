@@ -35,9 +35,8 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
 
     private String getCompCode() {
         String option = "Company";
-        String period = Util1.toDateStr(Util1.getTodayDate(), "MMyy");
-        int seqNo = seqService.getSeqNo(new SeqKey(option, period));
-        return period + "-" + String.format("%0" + 3 + "d", seqNo);
+        int seqNo = seqService.getSeqNo(new SeqKey(option, "-"));
+        return "C" + "-" + String.format("%0" + 3 + "d", seqNo);
     }
 
     private void updateRole(String compCode) {
@@ -47,7 +46,7 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
             key.setRoleCode(r.getRoleCode());
             key.setCompanyInfo(new CompanyInfo(compCode));
             PrivilegeCompany pc = new PrivilegeCompany();
-            pc.setPcKey(key);
+            pc.setKey(key);
             pc.setAllow(false);
             companyRepo.save(pc);
         }

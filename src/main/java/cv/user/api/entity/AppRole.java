@@ -1,37 +1,18 @@
 package cv.user.api.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Objects;
+import javax.persistence.*;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "role")
-public class AppRole implements java.io.Serializable {
+public class AppRole {
     @Id
     @Column(name = "role_code")
     private String roleCode;
     @Column(name = "role_name")
     private String roleName;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        AppRole appRole = (AppRole) o;
-        return roleCode != null && Objects.equals(roleCode, appRole.roleCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+    @Transient
+    private String exampleRole;
 }

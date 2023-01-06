@@ -5,26 +5,18 @@
  */
 package cv.user.api.entity;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.Hibernate;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @author Lenovo
  */
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "role_prop")
 public class RoleProperty implements Serializable {
@@ -35,16 +27,5 @@ public class RoleProperty implements Serializable {
     private String propValue;
     @Column(name = "remark")
     private String remark;
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RoleProperty that = (RoleProperty) o;
-        return key != null && Objects.equals(key, that.key);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(key);
-    }
 }

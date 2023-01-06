@@ -47,7 +47,7 @@ public class MenuServiceImpl implements MenuService {
                 PMKey key = new PMKey();
                 key.setRoleCode(role.getRoleCode());
                 key.setMenuCode(menuCode);
-                p.setPmKey(key);
+                p.setKey(key);
                 p.setAllow(true);
                 privilegeMenuRepo.save(p);
             }
