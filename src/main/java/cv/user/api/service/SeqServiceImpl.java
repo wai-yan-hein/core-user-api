@@ -27,7 +27,6 @@ public class SeqServiceImpl implements SeqService {
 
     @Override
     public int getSeqNo(SeqKey key) {
-        int seqNo = 0;
         SeqTable seqTable = new SeqTable();
         Optional<SeqTable> st = seqRepo.findById(key);
         if (st.isPresent()) {
