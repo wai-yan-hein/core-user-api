@@ -54,7 +54,7 @@ public class RoleServiceImpl implements RoleService {
             key.setMenuCode(m.getMenuCode());
             key.setRoleCode(roleCode);
             PrivilegeMenu menu = new PrivilegeMenu();
-            menu.setPmKey(key);
+            menu.setKey(key);
             menu.setAllow(false);
             privilegeMenuRepo.save(menu);
         }
