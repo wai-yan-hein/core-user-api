@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PrivilegeCompanyRepo extends JpaRepository<PrivilegeCompany, PCKey> {
-    @Query("select o from PrivilegeCompany o where o.pcKey.roleCode = :roleCode")
+    @Query("select o from PrivilegeCompany o where o.key.roleCode = :roleCode")
     List<PrivilegeCompany> getRoleCompany(@Param("roleCode") String roleCode);
 }
