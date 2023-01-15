@@ -13,4 +13,5 @@ public class PrivilegeMenu implements java.io.Serializable {
     @EmbeddedId
     private PMKey key;
     private boolean allow;
+
 }
