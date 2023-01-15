@@ -23,10 +23,6 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private PrivilegeCompanyRepo privilegeCompanyRepo;
     @Autowired
-    private MenuRepo menuRepo;
-    @Autowired
-    private CompanyInfoRepo companyInfoRepo;
-    @Autowired
     private RolePropertyRepo rolePropertyRepo;
 
     @Override
@@ -56,15 +52,9 @@ public class RoleServiceImpl implements RoleService {
             PrivilegeMenu menu = new PrivilegeMenu();
             PMKey key = new PMKey();
             key.setRoleCode(roleCode);
-<<<<<<< HEAD
-            PrivilegeMenu menu = new PrivilegeMenu();
-            menu.setKey(key);
-            menu.setAllow(false);
-=======
             key.setMenuCode(p.getKey().getMenuCode());
             menu.setKey(key);
             menu.setAllow(p.isAllow());
->>>>>>> 3175856dfb85e25f11512fe5523db80562388fdc
             privilegeMenuRepo.save(menu);
         }
         log.info("created menu.");
