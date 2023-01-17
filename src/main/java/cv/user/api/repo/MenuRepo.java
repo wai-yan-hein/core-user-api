@@ -11,7 +11,7 @@ public interface MenuRepo extends JpaRepository<Menu, String> {
     @Query("select o from Menu o where o.parentMenuCode = :parent order by o.orderBy")
     List<Menu> getMenuChild(@Param("parent") String parentCode);
 
-    @Query("select o from Menu o where o.menuClass = :menuClass")
-    List<Menu> getMenu(@Param("menuClass") String menuClass);
+    @Query("select o from Menu o where (o.menuClass='AllCash' or o.menuClass='DayBook') and (o.account is null or o.account ='')")
+    List<Menu> getMenuDynamic();
 
 }
