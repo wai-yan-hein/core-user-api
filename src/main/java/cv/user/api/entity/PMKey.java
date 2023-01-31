@@ -2,8 +2,7 @@ package cv.user.api.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.*;
 
 @Data
 @Embeddable

@@ -1,13 +1,8 @@
 package cv.user.api.entity;
 
 import lombok.*;
-import org.hibernate.Hibernate;
+import jakarta.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.Objects;
 
 @Data
 @Entity
