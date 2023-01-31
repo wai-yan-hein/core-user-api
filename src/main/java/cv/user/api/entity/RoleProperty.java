@@ -7,10 +7,8 @@ package cv.user.api.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 /**

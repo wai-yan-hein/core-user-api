@@ -1,11 +1,8 @@
 package cv.user.api.entity;
 
 import lombok.Data;
+import jakarta.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Data
 @Embeddable
