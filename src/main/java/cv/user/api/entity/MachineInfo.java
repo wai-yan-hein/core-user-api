@@ -3,7 +3,7 @@ package cv.user.api.entity;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 

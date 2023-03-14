@@ -1,8 +1,9 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

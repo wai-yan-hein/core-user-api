@@ -1,7 +1,7 @@
 package cv.user.api.entity;
 
 import lombok.Data;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Data
 @Embeddable
