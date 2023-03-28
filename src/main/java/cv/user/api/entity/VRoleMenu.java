@@ -2,16 +2,12 @@ package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "v_role_menu")
 public class VRoleMenu implements java.io.Serializable {
@@ -36,19 +32,9 @@ public class VRoleMenu implements java.io.Serializable {
     private String parentMenuCode;
     @Column(name = "order_by")
     private Integer orderBy;
+    @Column(name = "comp_code")
+    private String compCode;
     @Transient
     private List<VRoleMenu> child;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        VRoleMenu vRoleMenu = (VRoleMenu) o;
-        return menuCode != null && Objects.equals(menuCode, vRoleMenu.menuCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

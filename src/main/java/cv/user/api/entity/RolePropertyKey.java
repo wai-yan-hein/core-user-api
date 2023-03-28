@@ -6,12 +6,12 @@
 package cv.user.api.entity;
 
 import lombok.Data;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
 
 /**
- *
  * @author Lenovo
  */
 @Data
@@ -22,4 +22,6 @@ public class RolePropertyKey implements Serializable {
     private String roleCode;
     @Column(name = "prop_key")
     private String propKey;
+    @Column(name = "comp_code")
+    private String compCode;
 }

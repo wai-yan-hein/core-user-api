@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +116,7 @@ public class UserController {
 
     @PostMapping("/save-privilege-company")
     public ResponseEntity<PrivilegeCompany> savePC(@RequestBody PrivilegeCompany c) {
-        return ResponseEntity.ok(c = privilegeCompanyRepo.save(c));
+        return ResponseEntity.ok(privilegeCompanyRepo.save(c));
     }
 
     @GetMapping("/get-privilege-company")
@@ -134,20 +136,22 @@ public class UserController {
     }
 
     @GetMapping("/get-role-menu-tree")
-    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode) {
-        return ResponseEntity.ok(getMenu(roleCode));
+    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode,
+                                                       @RequestParam String compCode) {
+        return ResponseEntity.ok(getMenu(roleCode, compCode));
     }
 
     @GetMapping("/get-privilege-role-menu-tree")
-    public ResponseEntity<List<VRoleMenu>> getPRoleMenu(@RequestParam String roleCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode);
+    public Flux<?> getPRoleMenu(@RequestParam String roleCode,
+                                @RequestParam String compCode) {
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         menus.removeIf(m -> !m.isAllow());
-        return ResponseEntity.ok(menus);
+        return Flux.fromIterable(menus);
     }
 
     @GetMapping("/get-menu-tree")
-    public ResponseEntity<List<Menu>> getMenu() {
-        return ResponseEntity.ok(getMenuTree());
+    public Flux<?> getMenuFlux(@RequestParam String compCode) {
+        return Flux.fromIterable(getMenuTree(compCode));
     }
 
     @GetMapping("/get-menu-parent")
@@ -265,8 +269,8 @@ public class UserController {
     }
 
     @GetMapping("/get-system-property")
-    public ResponseEntity<List<SystemProperty>> getSystemProperty(@RequestParam String compCode) {
-        return ResponseEntity.ok(systemPropertyRepo.getSystemProperty(compCode));
+    public Flux<?> getSystemProperty(@RequestParam String compCode) {
+        return Flux.fromIterable(systemPropertyRepo.getSystemProperty(compCode));
     }
 
     @PostMapping("/find-system-property")
@@ -281,9 +285,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-property")
-    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode,
-                                                               @RequestParam String roleCode,
-                                                               @RequestParam Integer macId) {
+    public Mono<?> getProperty(@RequestParam String compCode,
+                               @RequestParam String roleCode,
+                               @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
@@ -304,11 +308,11 @@ public class UserController {
                 hm.put(p.getKey().getPropKey(), p.getPropValue());
             }
         }
-        return ResponseEntity.ok(hm);
+        return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(roleCode, "1");
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getRoleMenuChild(role);
@@ -317,8 +321,8 @@ public class UserController {
         return roles;
     }
 
-    private List<VRoleMenu> getMenu(String roleCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(roleCode, "1");
+    private List<VRoleMenu> getMenu(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getMenuChild(role);
@@ -328,7 +332,7 @@ public class UserController {
     }
 
     private void getMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(parent.getRoleCode(), parent.getMenuCode());
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
@@ -338,7 +342,7 @@ public class UserController {
     }
 
     private void getRoleMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode());
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
@@ -347,8 +351,8 @@ public class UserController {
         }
     }
 
-    private List<Menu> getMenuTree() {
-        List<Menu> menus = menuRepo.getMenuChild("1");
+    private List<Menu> getMenuTree(String compCode) {
+        List<Menu> menus = menuRepo.getMenuChild("1", compCode);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
                 getMenuChild(m);
@@ -358,7 +362,7 @@ public class UserController {
     }
 
     private void getMenuChild(Menu parent) {
-        List<Menu> menus = menuRepo.getMenuChild(parent.getMenuCode());
+        List<Menu> menus = menuRepo.getMenuChild(parent.getKey().getMenuCode(), parent.getKey().getCompCode());
         parent.setChild(menus);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {

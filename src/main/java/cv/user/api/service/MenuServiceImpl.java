@@ -25,11 +25,17 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Menu save(Menu menu) {
-        if (Util1.isNullOrEmpty(menu.getMenuCode())) {
-            menu.setMenuCode(getMenuCode());
-            updatePrivileges(menu.getMenuCode());
+        MenuKey key = menu.getKey();
+        if (Util1.isNullOrEmpty(key.getMenuCode())) {
+            key.setMenuCode(getMenuCode());
+            updatePrivileges(menu.getKey().getMenuCode());
         }
         return menuRepo.save(menu);
+    }
+
+    @Override
+    public List<VRoleMenu> getMenuChile(String roleCode, String compCode, boolean active) {
+        return null;
     }
 
     private String getMenuCode() {
