@@ -40,6 +40,7 @@ public class RoleServiceImpl implements RoleService {
         return repo.save(role);
     }
 
+
     private String getRoleCode() {
         String option = "Role";
         int seqNo = seqService.getSeqNo(new SeqKey(option, "-"));
@@ -67,7 +68,7 @@ public class RoleServiceImpl implements RoleService {
             PrivilegeCompany company = new PrivilegeCompany();
             PCKey key = new PCKey();
             key.setRoleCode(roleCode);
-            key.setCompanyInfo(p.getKey().getCompanyInfo());
+            key.setCompCode(p.getKey().getCompCode());
             company.setKey(key);
             company.setAllow(p.isAllow());
             privilegeCompanyRepo.save(company);

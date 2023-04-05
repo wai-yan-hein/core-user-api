@@ -24,7 +24,6 @@ public class AppUser implements java.io.Serializable {
     private String password;
     @Column(name = "active")
     private boolean active;
-    @ManyToOne
-    @JoinColumn(name = "role_code")
-    private AppRole role;
+    @Column(name = "role_code")
+    private String roleCode;
 }

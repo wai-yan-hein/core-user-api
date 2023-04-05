@@ -1,19 +1,14 @@
 package cv.user.api.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "v_role_company")
-public class VRoleCompany implements java.io.Serializable {
+public class VRoleCompany {
     @Id
     @Column(name = "comp_code")
     private String compCode;
@@ -35,17 +30,9 @@ public class VRoleCompany implements java.io.Serializable {
     private String currency;
     @Column(name = "allow")
     private boolean allow;
+    @Column(name = "batch_lock")
+    private boolean batchLock;
+    @Column(name = "year_end_date")
+    private Date yearEndDate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        VRoleCompany that = (VRoleCompany) o;
-        return compCode != null && Objects.equals(compCode, that.compCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

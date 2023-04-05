@@ -2,12 +2,10 @@ package cv.user.api.controller;
 
 import cv.user.api.common.ReturnObject;
 import cv.user.api.common.Util1;
+import cv.user.api.common.YearEnd;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
-import cv.user.api.service.AppUserService;
-import cv.user.api.service.CompanyInfoService;
-import cv.user.api.service.MenuService;
-import cv.user.api.service.RoleService;
+import cv.user.api.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +59,8 @@ public class UserController {
     private MacPropertyRepo macPropertyRepo;
     @Autowired
     private DepartmentRepo departmentRepo;
+    @Autowired
+    private BusinessTypeService businessTypeService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -155,27 +155,27 @@ public class UserController {
     }
 
     @GetMapping("/get-menu-parent")
-    public ResponseEntity<List<Menu>> getMenuParent() {
-        List<Menu> menus = menuRepo.getMenuDynamic();
+    public ResponseEntity<List<Menu>> getMenuParent(@RequestParam String compCode) {
+        List<Menu> menus = menuRepo.getMenuDynamic(compCode);
         return ResponseEntity.ok(menus);
     }
 
     @PostMapping(path = "/save-menu")
-    public ResponseEntity<ReturnObject> saveMenu(@RequestBody Menu menu) {
-        menuService.save(menu);
-        ro.setData(menu);
-        return ResponseEntity.ok(ro);
+    public Mono<?> saveMenu(@RequestBody Menu menu) {
+        return Mono.justOrEmpty(menuService.save(menu));
     }
 
     @PostMapping(path = "/delete-menu")
-    public ResponseEntity<ReturnObject> deleteMenu(@RequestBody Menu menu) {
+    public Mono<?> deleteMenu(@RequestBody Menu menu) {
         menuRepo.delete(menu);
-        return ResponseEntity.ok(ro);
+        return Mono.just(true);
     }
 
     @GetMapping("/get-report")
-    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass) {
-        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-")));
+    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode,
+                                                     @RequestParam String menuClass,
+                                                     @RequestParam String compCode) {
+        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
     }
 
     @GetMapping("/get-role")
@@ -264,8 +264,8 @@ public class UserController {
     }
 
     @GetMapping("/get-company")
-    public ResponseEntity<List<CompanyInfo>> getCompany() {
-        return ResponseEntity.ok(companyInfoRepo.findAll());
+    public Flux<?> getCompany(@RequestParam Boolean active) {
+        return Flux.fromIterable(companyInfoRepo.findAll());
     }
 
     @GetMapping("/get-system-property")
@@ -386,4 +386,25 @@ public class UserController {
     public ResponseEntity<?> saveDepartment(@RequestBody Department department) {
         return ResponseEntity.ok(departmentRepo.save(department));
     }
+
+    @GetMapping(path = "/getBusinessType")
+    public Flux<?> getBusinessType() {
+        return Flux.fromIterable(businessTypeService.findAll());
+    }
+
+    @GetMapping(path = "/findBusinessType")
+    public Mono<?> findBusinessType(@RequestParam Integer id) {
+        return Mono.justOrEmpty(businessTypeService.findById(id));
+    }
+
+    @PostMapping(path = "/saveBusinessType")
+    public Mono<?> saveBusinessType(@RequestBody BusinessType type) {
+        return Mono.justOrEmpty(businessTypeService.save(type));
+    }
+
+    @PostMapping(path = "/yearEnd")
+    public Mono<?> yearEnd(@RequestBody YearEnd end) {
+        return Mono.justOrEmpty(companyInfoService.yearEnd(end));
+    }
+
 }

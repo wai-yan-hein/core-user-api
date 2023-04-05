@@ -11,4 +11,7 @@ import java.util.List;
 public interface RolePropertyRepo extends JpaRepository<RoleProperty, RolePropertyKey> {
     @Query("select o from RoleProperty o where o.key.roleCode = :roleCode")
     List<RoleProperty> getRoleProperty(@Param("roleCode") String roleCode);
+    @Query("select o from RoleProperty o where o.key.compCode = :compCode")
+    List<RoleProperty> getRole(@Param("compCode") String compCode);
+
 }

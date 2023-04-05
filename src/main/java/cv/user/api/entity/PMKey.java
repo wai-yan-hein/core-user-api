@@ -11,6 +11,8 @@ public class PMKey implements java.io.Serializable{
     private String roleCode;
     @Column(name = "menu_code")
     private String menuCode;
+    @Column(name = "comp_code")
+    private String compCode;
 
     public PMKey() {
     }

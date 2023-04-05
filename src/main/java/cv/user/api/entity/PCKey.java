@@ -9,7 +9,6 @@ import javax.persistence.*;
 public class PCKey implements java.io.Serializable {
     @Column(name = "role_code")
     private String roleCode;
-    @ManyToOne
-    @JoinColumn(name = "comp_code")
-    private CompanyInfo companyInfo;
+    @Column(name = "comp_code")
+    private String compCode;
 }

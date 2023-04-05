@@ -11,4 +11,8 @@ import java.util.List;
 public interface PrivilegeMenuRepo extends JpaRepository<PrivilegeMenu, PMKey> {
     @Query("select o from PrivilegeMenu o where o.key.roleCode=:roleCode")
     List<PrivilegeMenu> getPrivilegeRole(@Param("roleCode") String roleCode);
+
+    @Query("select o from PrivilegeMenu o where o.key.compCode=:compCode")
+    List<PrivilegeMenu> getPrivilegeCompany(@Param("compCode") String compCode);
+
 }
