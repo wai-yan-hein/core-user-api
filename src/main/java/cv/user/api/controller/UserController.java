@@ -109,9 +109,8 @@ public class UserController {
     }
 
     @PostMapping("/save-user")
-    public ResponseEntity<AppUser> saveUser(@RequestBody AppUser user) {
-        user = appUserService.save(user);
-        return ResponseEntity.ok(user);
+    public Mono<AppUser> saveUser(@RequestBody AppUser user) {
+        return Mono.just(appUserService.save(user));
     }
 
     @PostMapping("/save-privilege-company")
@@ -120,13 +119,18 @@ public class UserController {
     }
 
     @GetMapping("/get-privilege-company")
-    public ResponseEntity<List<PrivilegeCompany>> getPC(@RequestParam String roleCode) {
-        return ResponseEntity.ok(privilegeCompanyRepo.getRoleCompany(roleCode));
+    public Flux<?> getPC(@RequestParam String roleCode) {
+        List<PrivilegeCompany> list = privilegeCompanyRepo.getRoleCompany(roleCode);
+        list.forEach(p -> {
+            Optional<CompanyInfo> c = companyInfoRepo.findById(p.getKey().getCompCode());
+            c.ifPresent(info -> p.setCompName(info.getCompName()));
+        });
+        return Flux.fromIterable(list);
     }
 
     @GetMapping("/get-appuser")
-    public ResponseEntity<List<AppUser>> getAppUser() {
-        return ResponseEntity.ok(userRepo.findAll());
+    public Flux<?> getAppUser() {
+        return Flux.fromIterable(userRepo.findAll());
     }
 
     @GetMapping("/find-appuser")
@@ -184,15 +188,23 @@ public class UserController {
     }
 
     @PostMapping(path = "/save-role")
-    public ResponseEntity<AppRole> saveRole(@RequestBody AppRole role) {
-        role = roleService.save(role);
-        return ResponseEntity.ok(role);
+    public Mono<?> saveRole(@RequestBody AppRole role) {
+        return Mono.just(roleService.save(role));
+    }
+
+    @GetMapping(path = "/findCompany")
+    public Mono<?> findCompany(@RequestParam String compCode) {
+        return Mono.justOrEmpty(companyInfoRepo.findById(compCode).orElse(null));
+    }
+
+    @GetMapping(path = "/find-role")
+    public Mono<?> findRole(@RequestParam String roleCode) {
+        return Mono.justOrEmpty(roleService.findById(roleCode));
     }
 
     @PostMapping(path = "/save-privilege-menu")
-    public ResponseEntity<ReturnObject> savePM(@RequestBody PrivilegeMenu pm) {
-        privilegeMenuRepo.save(pm);
-        return ResponseEntity.ok(ro);
+    public Mono<?> savePM(@RequestBody PrivilegeMenu pm) {
+        return Mono.justOrEmpty(privilegeMenuRepo.save(pm));
     }
 
     @GetMapping(path = "/get-role-property")
@@ -208,10 +220,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-privilege-role-company")
-    public ResponseEntity<List<VRoleCompany>> getPRoleCompany(@RequestParam String roleCode) {
-        List<VRoleCompany> property = vRoleCompanyRepo.getCompany(roleCode);
-        property.removeIf(m -> !m.isAllow());
-        return ResponseEntity.ok(property);
+    public Flux<?> getPRoleCompany(@RequestParam String roleCode) {
+        return Flux.fromIterable(vRoleCompanyRepo.getCompany(roleCode));
     }
 
     @PostMapping(path = "/save-role-property")
@@ -240,7 +250,7 @@ public class UserController {
     @GetMapping("/find-currency")
     public ResponseEntity<Currency> findCurrency(@RequestParam String curCode) {
         Optional<Currency> cur = currencyRepo.findById(curCode);
-        return ResponseEntity.ok(cur.isEmpty() ? null : cur.get());
+        return ResponseEntity.ok(cur.orElse(null));
     }
 
 
