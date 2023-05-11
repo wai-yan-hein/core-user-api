@@ -24,6 +24,18 @@ public class Util1 {
             return strValue;
         }
     }
+    public static String getString(Object value) {
+        return value == null ? null : value.toString();
+    }
+    public static int getInteger(Object number) {
+        int value = 0;
+        if (number != null) {
+            if (!number.toString().isEmpty()) {
+                value = Integer.parseInt(number.toString());
+            }
+        }
+        return value;
+    }
     public static String toDateStr(Date date, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         String strDate = null;

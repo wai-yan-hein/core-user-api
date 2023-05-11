@@ -25,11 +25,11 @@ add primary key (menu_code, role_code, comp_code);
 
 set sql_safe_updates=0;
 update privilege_menu
-set comp_code ='0010010';
+set comp_code ='01';
 update menu
-set comp_code ='0010010';
+set comp_code ='01';
 update role_prop
-set comp_code ='0010010';
+set comp_code ='01';
 delete from role where role_name='';
 
 drop view if exists v_role_company;
@@ -65,4 +65,15 @@ create table menu_template (
   account varchar(15) default null,
   order_by int(11) default null,
   primary key (menu_id,bus_id)
+) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
+
+create table project (
+  project_no varchar(15) not null,
+  comp_code varchar(15) not null,
+  project_name varchar(255) not null,
+  start_date date not null,
+  end_date date not null,
+  budget double default null,
+  project_status varchar(15) not null,
+  primary key (project_no,comp_code)
 ) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;

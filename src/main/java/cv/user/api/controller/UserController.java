@@ -61,6 +61,8 @@ public class UserController {
     private DepartmentRepo departmentRepo;
     @Autowired
     private BusinessTypeService businessTypeService;
+    @Autowired
+    private ProjectService projectService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -69,9 +71,8 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<AppUser> login(@RequestParam String userName, @RequestParam String password) {
-        AppUser user = userRepo.login(userName, password);
-        return ResponseEntity.ok(user);
+    public Mono<?> login(@RequestParam String userName, @RequestParam String password) {
+        return Mono.justOrEmpty(userRepo.login(userName, password));
     }
 
     @GetMapping("/get-mac-info")
@@ -140,14 +141,12 @@ public class UserController {
     }
 
     @GetMapping("/get-role-menu-tree")
-    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode,
-                                                       @RequestParam String compCode) {
+    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
         return ResponseEntity.ok(getMenu(roleCode, compCode));
     }
 
     @GetMapping("/get-privilege-role-menu-tree")
-    public Flux<?> getPRoleMenu(@RequestParam String roleCode,
-                                @RequestParam String compCode) {
+    public Flux<?> getPRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
         List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         menus.removeIf(m -> !m.isAllow());
         return Flux.fromIterable(menus);
@@ -176,9 +175,7 @@ public class UserController {
     }
 
     @GetMapping("/get-report")
-    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode,
-                                                     @RequestParam String menuClass,
-                                                     @RequestParam String compCode) {
+    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass, @RequestParam String compCode) {
         return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
     }
 
@@ -295,9 +292,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-property")
-    public Mono<?> getProperty(@RequestParam String compCode,
-                               @RequestParam String roleCode,
-                               @RequestParam Integer macId) {
+    public Mono<?> getProperty(@RequestParam String compCode, @RequestParam String roleCode, @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
@@ -410,6 +405,26 @@ public class UserController {
     @PostMapping(path = "/saveBusinessType")
     public Mono<?> saveBusinessType(@RequestBody BusinessType type) {
         return Mono.justOrEmpty(businessTypeService.save(type));
+    }
+
+    @PostMapping(path = "/saveProject")
+    public Mono<?> saveProject(@RequestBody Project project) {
+        return Mono.justOrEmpty(projectService.save(project));
+    }
+
+    @PostMapping(path = "/findProject")
+    public Mono<?> findProject(@RequestBody ProjectKey key) {
+        return Mono.justOrEmpty(projectService.find(key));
+    }
+
+    @GetMapping(path = "/searchProject")
+    public Flux<?> searchProject(@RequestParam String compCode) {
+        return Flux.fromIterable(projectService.search(compCode));
+    }
+
+    @GetMapping(path = "/searchProjectByCode")
+    public Flux<?> searchProjectByCode(@RequestParam String code, @RequestParam String compCode) {
+        return Flux.fromIterable(projectService.search(code, compCode));
     }
 
     @PostMapping(path = "/yearEnd")
