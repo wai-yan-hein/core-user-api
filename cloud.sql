@@ -77,3 +77,9 @@ create table project (
   project_status varchar(15) not null,
   primary key (project_no,comp_code)
 ) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
+
+alter table appuser
+add column doctor_id varchar(15) null after phone,
+change column role_code role_code varchar(15) null ,
+drop primary key,
+add primary key (user_code);

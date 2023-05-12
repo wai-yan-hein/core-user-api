@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "appuser")
-public class AppUser implements java.io.Serializable {
+public class AppUser {
     @Id
     @Column(name = "user_code")
     private String userCode;
@@ -26,4 +26,6 @@ public class AppUser implements java.io.Serializable {
     private boolean active;
     @Column(name = "role_code")
     private String roleCode;
+    @Column(name = "doctor_id")
+    private String doctorId;
 }
