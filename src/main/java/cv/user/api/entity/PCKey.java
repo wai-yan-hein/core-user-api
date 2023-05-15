@@ -1,7 +1,7 @@
 package cv.user.api.entity;
 
 import lombok.Data;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 @Data
@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 public class PCKey implements java.io.Serializable {
     @Column(name = "role_code")
     private String roleCode;
-    @ManyToOne
-    @JoinColumn(name = "comp_code")
-    private CompanyInfo companyInfo;
+    @Column(name = "comp_code")
+    private String compCode;
 }

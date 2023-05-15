@@ -15,6 +15,8 @@ import java.util.Collections;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -29,9 +31,9 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Core User Api",
                 "Documentation",
-                "CORE USER API",
+                "1.0",
                 "Terms of service",
-                new Contact("Core Value Software Solutions", "www.google.com", "corevaluemyanmar@gmail.com"),
+                new Contact("wai yan", "www.corevaluemm.com", "waiyanhain215@gmail.com"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 }

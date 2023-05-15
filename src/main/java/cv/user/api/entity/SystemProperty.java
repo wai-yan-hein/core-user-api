@@ -3,7 +3,7 @@ package cv.user.api.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Getter
 @Setter

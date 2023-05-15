@@ -25,12 +25,19 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Menu save(Menu menu) {
-        if (Util1.isNullOrEmpty(menu.getMenuCode())) {
-            menu.setMenuCode(getMenuCode());
-            updatePrivileges(menu.getMenuCode());
+        MenuKey key = menu.getKey();
+        if (Util1.isNullOrEmpty(key.getMenuCode())) {
+            key.setMenuCode(getMenuCode());
+            updatePrivileges(key.getMenuCode(), key.getCompCode());
         }
         return menuRepo.save(menu);
     }
+
+    @Override
+    public List<Menu> getMenu(String compCode) {
+        return menuRepo.getMenu(compCode);
+    }
+
 
     private String getMenuCode() {
         String option = "Menu";
@@ -39,12 +46,13 @@ public class MenuServiceImpl implements MenuService {
         return period + "-" + String.format("%0" + 3 + "d", seqNo);
     }
 
-    private void updatePrivileges(String menuCode) {
+    private void updatePrivileges(String menuCode, String compCode) {
         List<AppRole> roles = roleRepo.findAll();
         if (!roles.isEmpty()) {
             for (AppRole role : roles) {
                 PrivilegeMenu p = new PrivilegeMenu();
                 PMKey key = new PMKey();
+                key.setCompCode(compCode);
                 key.setRoleCode(role.getRoleCode());
                 key.setMenuCode(menuCode);
                 p.setKey(key);

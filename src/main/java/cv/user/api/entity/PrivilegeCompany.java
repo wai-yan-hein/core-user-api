@@ -1,7 +1,7 @@
 package cv.user.api.entity;
 
 import lombok.*;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 @Data
@@ -12,5 +12,7 @@ public class PrivilegeCompany implements java.io.Serializable {
     private PCKey key;
     @Column(name = "allow")
     private boolean allow;
+    @Transient
+    private String compName;
 
 }

@@ -40,6 +40,12 @@ public class RoleServiceImpl implements RoleService {
         return repo.save(role);
     }
 
+    @Override
+    public AppRole findById(String roleId) {
+        return repo.findById(roleId).orElse(null);
+    }
+
+
     private String getRoleCode() {
         String option = "Role";
         int seqNo = seqService.getSeqNo(new SeqKey(option, "-"));
@@ -53,6 +59,7 @@ public class RoleServiceImpl implements RoleService {
             PMKey key = new PMKey();
             key.setRoleCode(roleCode);
             key.setMenuCode(p.getKey().getMenuCode());
+            key.setCompCode(p.getKey().getCompCode());
             menu.setKey(key);
             menu.setAllow(p.isAllow());
             privilegeMenuRepo.save(menu);
@@ -67,7 +74,7 @@ public class RoleServiceImpl implements RoleService {
             PrivilegeCompany company = new PrivilegeCompany();
             PCKey key = new PCKey();
             key.setRoleCode(roleCode);
-            key.setCompanyInfo(p.getKey().getCompanyInfo());
+            key.setCompCode(p.getKey().getCompCode());
             company.setKey(key);
             company.setAllow(p.isAllow());
             privilegeCompanyRepo.save(company);
@@ -81,6 +88,7 @@ public class RoleServiceImpl implements RoleService {
             RolePropertyKey key = new RolePropertyKey();
             key.setRoleCode(roleCode);
             key.setPropKey(p.getKey().getPropKey());
+            key.setCompCode(p.getKey().getCompCode());
             role.setKey(key);
             role.setPropValue(p.getPropValue());
             rolePropertyRepo.save(role);

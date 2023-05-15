@@ -1,15 +1,16 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Entity
 @Table(name = "appuser")
-public class AppUser implements java.io.Serializable {
+public class AppUser {
     @Id
     @Column(name = "user_code")
     private String userCode;
@@ -23,7 +24,8 @@ public class AppUser implements java.io.Serializable {
     private String password;
     @Column(name = "active")
     private boolean active;
-    @ManyToOne
-    @JoinColumn(name = "role_code")
-    private AppRole role;
+    @Column(name = "role_code")
+    private String roleCode;
+    @Column(name = "doctor_id")
+    private String doctorId;
 }

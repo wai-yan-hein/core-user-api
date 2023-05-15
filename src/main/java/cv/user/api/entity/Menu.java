@@ -1,22 +1,16 @@
 package cv.user.api.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Data;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "menu")
-public class Menu implements java.io.Serializable {
-    @Id
-    @Column(name = "menu_code")
-    private String menuCode;
+public class Menu  {
+    @EmbeddedId
+    private MenuKey key;
     @Column(name = "user_code")
     private String userCode;
     @Column(name = "menu_class")
@@ -35,17 +29,4 @@ public class Menu implements java.io.Serializable {
     private Integer orderBy;
     @Transient
     private List<Menu> child;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Menu menu = (Menu) o;
-        return menuCode != null && Objects.equals(menuCode, menu.menuCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

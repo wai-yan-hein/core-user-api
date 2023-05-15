@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface VRoleCompanyRepo extends JpaRepository<VRoleCompany, String> {
-    @Query("select o from VRoleCompany o where o.roleCode = :roleCode")
+    @Query("select o from VRoleCompany o where o.roleCode = :roleCode and allow = 1")
     List<VRoleCompany> getCompany(@Param("roleCode") String roleCode);
 
 }

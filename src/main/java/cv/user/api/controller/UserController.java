@@ -2,16 +2,16 @@ package cv.user.api.controller;
 
 import cv.user.api.common.ReturnObject;
 import cv.user.api.common.Util1;
+import cv.user.api.common.YearEnd;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
-import cv.user.api.service.AppUserService;
-import cv.user.api.service.CompanyInfoService;
-import cv.user.api.service.MenuService;
-import cv.user.api.service.RoleService;
+import cv.user.api.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +59,10 @@ public class UserController {
     private MacPropertyRepo macPropertyRepo;
     @Autowired
     private DepartmentRepo departmentRepo;
+    @Autowired
+    private BusinessTypeService businessTypeService;
+    @Autowired
+    private ProjectService projectService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -67,9 +71,8 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<AppUser> login(@RequestParam String userName, @RequestParam String password) {
-        AppUser user = userRepo.login(userName, password);
-        return ResponseEntity.ok(user);
+    public Mono<?> login(@RequestParam String userName, @RequestParam String password) {
+        return Mono.justOrEmpty(userRepo.login(userName, password));
     }
 
     @GetMapping("/get-mac-info")
@@ -107,24 +110,28 @@ public class UserController {
     }
 
     @PostMapping("/save-user")
-    public ResponseEntity<AppUser> saveUser(@RequestBody AppUser user) {
-        user = appUserService.save(user);
-        return ResponseEntity.ok(user);
+    public Mono<AppUser> saveUser(@RequestBody AppUser user) {
+        return Mono.just(appUserService.save(user));
     }
 
     @PostMapping("/save-privilege-company")
     public ResponseEntity<PrivilegeCompany> savePC(@RequestBody PrivilegeCompany c) {
-        return ResponseEntity.ok(c = privilegeCompanyRepo.save(c));
+        return ResponseEntity.ok(privilegeCompanyRepo.save(c));
     }
 
     @GetMapping("/get-privilege-company")
-    public ResponseEntity<List<PrivilegeCompany>> getPC(@RequestParam String roleCode) {
-        return ResponseEntity.ok(privilegeCompanyRepo.getRoleCompany(roleCode));
+    public Flux<?> getPC(@RequestParam String roleCode) {
+        List<PrivilegeCompany> list = privilegeCompanyRepo.getRoleCompany(roleCode);
+        list.forEach(p -> {
+            Optional<CompanyInfo> c = companyInfoRepo.findById(p.getKey().getCompCode());
+            c.ifPresent(info -> p.setCompName(info.getCompName()));
+        });
+        return Flux.fromIterable(list);
     }
 
     @GetMapping("/get-appuser")
-    public ResponseEntity<List<AppUser>> getAppUser() {
-        return ResponseEntity.ok(userRepo.findAll());
+    public Flux<?> getAppUser() {
+        return Flux.fromIterable(userRepo.findAll());
     }
 
     @GetMapping("/find-appuser")
@@ -134,44 +141,42 @@ public class UserController {
     }
 
     @GetMapping("/get-role-menu-tree")
-    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode) {
-        return ResponseEntity.ok(getMenu(roleCode));
+    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
+        return ResponseEntity.ok(getMenu(roleCode, compCode));
     }
 
     @GetMapping("/get-privilege-role-menu-tree")
-    public ResponseEntity<List<VRoleMenu>> getPRoleMenu(@RequestParam String roleCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode);
+    public Flux<?> getPRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         menus.removeIf(m -> !m.isAllow());
-        return ResponseEntity.ok(menus);
+        return Flux.fromIterable(menus);
     }
 
     @GetMapping("/get-menu-tree")
-    public ResponseEntity<List<Menu>> getMenu() {
-        return ResponseEntity.ok(getMenuTree());
+    public Flux<?> getMenuFlux(@RequestParam String compCode) {
+        return Flux.fromIterable(getMenuTree(compCode));
     }
 
     @GetMapping("/get-menu-parent")
-    public ResponseEntity<List<Menu>> getMenuParent() {
-        List<Menu> menus = menuRepo.getMenuDynamic();
+    public ResponseEntity<List<Menu>> getMenuParent(@RequestParam String compCode) {
+        List<Menu> menus = menuRepo.getMenuDynamic(compCode);
         return ResponseEntity.ok(menus);
     }
 
     @PostMapping(path = "/save-menu")
-    public ResponseEntity<ReturnObject> saveMenu(@RequestBody Menu menu) {
-        menuService.save(menu);
-        ro.setData(menu);
-        return ResponseEntity.ok(ro);
+    public Mono<?> saveMenu(@RequestBody Menu menu) {
+        return Mono.justOrEmpty(menuService.save(menu));
     }
 
     @PostMapping(path = "/delete-menu")
-    public ResponseEntity<ReturnObject> deleteMenu(@RequestBody Menu menu) {
+    public Mono<?> deleteMenu(@RequestBody Menu menu) {
         menuRepo.delete(menu);
-        return ResponseEntity.ok(ro);
+        return Mono.just(true);
     }
 
     @GetMapping("/get-report")
-    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass) {
-        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-")));
+    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass, @RequestParam String compCode) {
+        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
     }
 
     @GetMapping("/get-role")
@@ -180,15 +185,23 @@ public class UserController {
     }
 
     @PostMapping(path = "/save-role")
-    public ResponseEntity<AppRole> saveRole(@RequestBody AppRole role) {
-        role = roleService.save(role);
-        return ResponseEntity.ok(role);
+    public Mono<?> saveRole(@RequestBody AppRole role) {
+        return Mono.just(roleService.save(role));
+    }
+
+    @GetMapping(path = "/findCompany")
+    public Mono<?> findCompany(@RequestParam String compCode) {
+        return Mono.justOrEmpty(companyInfoRepo.findById(compCode).orElse(null));
+    }
+
+    @GetMapping(path = "/find-role")
+    public Mono<?> findRole(@RequestParam String roleCode) {
+        return Mono.justOrEmpty(roleService.findById(roleCode));
     }
 
     @PostMapping(path = "/save-privilege-menu")
-    public ResponseEntity<ReturnObject> savePM(@RequestBody PrivilegeMenu pm) {
-        privilegeMenuRepo.save(pm);
-        return ResponseEntity.ok(ro);
+    public Mono<?> savePM(@RequestBody PrivilegeMenu pm) {
+        return Mono.justOrEmpty(privilegeMenuRepo.save(pm));
     }
 
     @GetMapping(path = "/get-role-property")
@@ -204,10 +217,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-privilege-role-company")
-    public ResponseEntity<List<VRoleCompany>> getPRoleCompany(@RequestParam String roleCode) {
-        List<VRoleCompany> property = vRoleCompanyRepo.getCompany(roleCode);
-        property.removeIf(m -> !m.isAllow());
-        return ResponseEntity.ok(property);
+    public Flux<?> getPRoleCompany(@RequestParam String roleCode) {
+        return Flux.fromIterable(vRoleCompanyRepo.getCompany(roleCode));
     }
 
     @PostMapping(path = "/save-role-property")
@@ -236,7 +247,7 @@ public class UserController {
     @GetMapping("/find-currency")
     public ResponseEntity<Currency> findCurrency(@RequestParam String curCode) {
         Optional<Currency> cur = currencyRepo.findById(curCode);
-        return ResponseEntity.ok(cur.isEmpty() ? null : cur.get());
+        return ResponseEntity.ok(cur.orElse(null));
     }
 
 
@@ -260,13 +271,13 @@ public class UserController {
     }
 
     @GetMapping("/get-company")
-    public ResponseEntity<List<CompanyInfo>> getCompany() {
-        return ResponseEntity.ok(companyInfoRepo.findAll());
+    public Flux<?> getCompany(@RequestParam Boolean active) {
+        return Flux.fromIterable(companyInfoRepo.findAll());
     }
 
     @GetMapping("/get-system-property")
-    public ResponseEntity<List<SystemProperty>> getSystemProperty(@RequestParam String compCode) {
-        return ResponseEntity.ok(systemPropertyRepo.getSystemProperty(compCode));
+    public Flux<?> getSystemProperty(@RequestParam String compCode) {
+        return Flux.fromIterable(systemPropertyRepo.getSystemProperty(compCode));
     }
 
     @PostMapping("/find-system-property")
@@ -281,9 +292,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-property")
-    public ResponseEntity<HashMap<String, String>> getProperty(@RequestParam String compCode,
-                                                               @RequestParam String roleCode,
-                                                               @RequestParam Integer macId) {
+    public Mono<?> getProperty(@RequestParam String compCode, @RequestParam String roleCode, @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
         if (!systemProperty.isEmpty()) {
@@ -304,11 +313,11 @@ public class UserController {
                 hm.put(p.getKey().getPropKey(), p.getPropValue());
             }
         }
-        return ResponseEntity.ok(hm);
+        return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(roleCode, "1");
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getRoleMenuChild(role);
@@ -317,8 +326,8 @@ public class UserController {
         return roles;
     }
 
-    private List<VRoleMenu> getMenu(String roleCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(roleCode, "1");
+    private List<VRoleMenu> getMenu(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getMenuChild(role);
@@ -328,7 +337,7 @@ public class UserController {
     }
 
     private void getMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(parent.getRoleCode(), parent.getMenuCode());
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
@@ -338,7 +347,7 @@ public class UserController {
     }
 
     private void getRoleMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode());
+        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
@@ -347,8 +356,8 @@ public class UserController {
         }
     }
 
-    private List<Menu> getMenuTree() {
-        List<Menu> menus = menuRepo.getMenuChild("1");
+    private List<Menu> getMenuTree(String compCode) {
+        List<Menu> menus = menuRepo.getMenuChild("1", compCode);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
                 getMenuChild(m);
@@ -358,7 +367,7 @@ public class UserController {
     }
 
     private void getMenuChild(Menu parent) {
-        List<Menu> menus = menuRepo.getMenuChild(parent.getMenuCode());
+        List<Menu> menus = menuRepo.getMenuChild(parent.getKey().getMenuCode(), parent.getKey().getCompCode());
         parent.setChild(menus);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
@@ -382,4 +391,45 @@ public class UserController {
     public ResponseEntity<?> saveDepartment(@RequestBody Department department) {
         return ResponseEntity.ok(departmentRepo.save(department));
     }
+
+    @GetMapping(path = "/getBusinessType")
+    public Flux<?> getBusinessType() {
+        return Flux.fromIterable(businessTypeService.findAll());
+    }
+
+    @GetMapping(path = "/findBusinessType")
+    public Mono<?> findBusinessType(@RequestParam Integer id) {
+        return Mono.justOrEmpty(businessTypeService.findById(id));
+    }
+
+    @PostMapping(path = "/saveBusinessType")
+    public Mono<?> saveBusinessType(@RequestBody BusinessType type) {
+        return Mono.justOrEmpty(businessTypeService.save(type));
+    }
+
+    @PostMapping(path = "/saveProject")
+    public Mono<?> saveProject(@RequestBody Project project) {
+        return Mono.justOrEmpty(projectService.save(project));
+    }
+
+    @PostMapping(path = "/findProject")
+    public Mono<?> findProject(@RequestBody ProjectKey key) {
+        return Mono.justOrEmpty(projectService.find(key));
+    }
+
+    @GetMapping(path = "/searchProject")
+    public Flux<?> searchProject(@RequestParam String compCode) {
+        return Flux.fromIterable(projectService.search(compCode));
+    }
+
+    @GetMapping(path = "/searchProjectByCode")
+    public Flux<?> searchProjectByCode(@RequestParam String code, @RequestParam String compCode) {
+        return Flux.fromIterable(projectService.search(code, compCode));
+    }
+
+    @PostMapping(path = "/yearEnd")
+    public Mono<?> yearEnd(@RequestBody YearEnd end) {
+        return Mono.justOrEmpty(companyInfoService.yearEnd(end));
+    }
+
 }
