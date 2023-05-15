@@ -56,7 +56,12 @@ public abstract class AbstractDao<PK extends Serializable, T> {
         }
     }
 
-
+    public void remove(PK pk) {
+        T byKey = getByKey(pk);
+        if (byKey != null) {
+            entityManager.remove(byKey);
+        }
+    }
     public List<Map<String, Object>> getList(String sql) {
         return jdbcTemplate.queryForList(sql);
     }
