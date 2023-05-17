@@ -13,5 +13,8 @@ public interface MenuTemplateRepo extends JpaRepository<MenuTemplate, MenuTempla
     Integer findMaxId();
 
     @Query("select o from MenuTemplate o where o.parentMenuId = :parent and o.key.busId = :busId order by o.orderBy")
-    List<MenuTemplate> getMenuChild(@Param("parent") Integer parentCode, @Param("busId") Integer compCode);
+    List<MenuTemplate> getMenuChild(@Param("parent") Integer parentCode, @Param("busId") Integer busId);
+
+    @Query("select o from MenuTemplate o where o.key.busId = :busId")
+    List<MenuTemplate> findAll(@Param("busId") Integer busId);
 }

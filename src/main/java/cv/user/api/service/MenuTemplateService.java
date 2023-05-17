@@ -8,4 +8,5 @@ public interface MenuTemplateService {
     MenuTemplate save(MenuTemplate menu);
 
     List<MenuTemplate> getMenu(Integer busId);
+    List<MenuTemplate> findAll(Integer busId);
 }
