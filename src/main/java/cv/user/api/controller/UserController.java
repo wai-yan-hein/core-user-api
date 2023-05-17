@@ -63,6 +63,8 @@ public class UserController {
     private BusinessTypeService businessTypeService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ExchangeRateService exchangeRateService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -425,6 +427,22 @@ public class UserController {
     @GetMapping(path = "/searchProjectByCode")
     public Flux<?> searchProjectByCode(@RequestParam String code, @RequestParam String compCode) {
         return Flux.fromIterable(projectService.search(code, compCode));
+    }
+
+    @PostMapping(path = "/saveExchange")
+    public Mono<?> saveExchange(@RequestBody ExchangeRate rate) {
+        return Mono.justOrEmpty(exchangeRateService.save(rate));
+    }
+
+    @PostMapping(path = "/deleteExchange")
+    public Mono<?> saveExchange(@RequestBody ExchangeKey key) {
+        return Mono.justOrEmpty(exchangeRateService.delete(key));
+    }
+
+    @GetMapping(path = "/searchExchange")
+    public Mono<?> saveExchange(@RequestParam String startDate, @RequestParam String endDate,
+                                @RequestParam String targetCur, @RequestParam String compCode) {
+        return Mono.justOrEmpty(exchangeRateService.search(startDate, endDate, targetCur, compCode));
     }
 
     @PostMapping(path = "/yearEnd")
