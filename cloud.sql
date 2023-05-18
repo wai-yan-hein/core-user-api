@@ -83,3 +83,20 @@ add column doctor_id varchar(15) null after phone,
 change column role_code role_code varchar(15) null ,
 drop primary key,
 add primary key (user_code);
+
+create table exchange_rate (
+  ex_code varchar(15) not null,
+  comp_code varchar(15) not null,
+  ex_date timestamp null default null,
+  home_factor double default null,
+  home_cur varchar(15) default null,
+  target_factor double default null,
+  target_cur varchar(15) default null,
+  created_date timestamp null default null,
+  created_by varchar(15) default null,
+  updated_date timestamp null default null,
+  updated_by varchar(15) default null,
+  deleted bit(1) not null default b'0',
+  primary key (ex_code,comp_code)
+) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
+
