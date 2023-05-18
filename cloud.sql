@@ -83,3 +83,6 @@ add column doctor_id varchar(15) null after phone,
 change column role_code role_code varchar(15) null ,
 drop primary key,
 add primary key (user_code);
+
+drop view if exists v_role_company;
+create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
