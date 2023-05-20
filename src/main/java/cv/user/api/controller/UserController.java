@@ -4,6 +4,7 @@ import cv.user.api.common.ReturnObject;
 import cv.user.api.common.Util1;
 import cv.user.api.common.YearEnd;
 import cv.user.api.entity.*;
+import cv.user.api.entity.Currency;
 import cv.user.api.repo.*;
 import cv.user.api.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin
 @Slf4j
@@ -432,6 +430,8 @@ public class UserController {
 
     @PostMapping(path = "/saveExchange")
     public Mono<?> saveExchange(@RequestBody ExchangeRate rate) {
+        rate.setExDate(Util1.toDateTime(rate.getExDate()));
+        rate.setCreatedDate(Util1.toDateTime(rate.getCreatedDate()));
         return Mono.justOrEmpty(exchangeRateService.save(rate));
     }
 
@@ -441,9 +441,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/searchExchange")
-    public Mono<?> saveExchange(@RequestParam String startDate, @RequestParam String endDate,
+    public Flux<?> searchExchange(@RequestParam String startDate, @RequestParam String endDate,
                                 @RequestParam String targetCur, @RequestParam String compCode) {
-        return Mono.justOrEmpty(exchangeRateService.search(startDate, endDate, targetCur, compCode));
+        List<ExchangeRate> list =exchangeRateService.search(startDate, endDate, targetCur, compCode);
+        list.forEach((t) -> {
+            t.setExRate(t.getHomeFactor()/t.getTargetFactor());adm
+        });
+        return Flux.fromIterable(list);
     }
 
     @PostMapping(path = "/yearEnd")
