@@ -445,7 +445,7 @@ public class UserController {
                                 @RequestParam String targetCur, @RequestParam String compCode) {
         List<ExchangeRate> list =exchangeRateService.search(startDate, endDate, targetCur, compCode);
         list.forEach((t) -> {
-            t.setExRate(t.getHomeFactor()/t.getTargetFactor());adm
+            t.setExRate(t.getHomeFactor()/t.getTargetFactor());
         });
         return Flux.fromIterable(list);
     }
