@@ -72,4 +72,13 @@ public class Util1 {
         return date;
     }
 
+    public static Date toDate(String str) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return dateFormat.parse(str);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

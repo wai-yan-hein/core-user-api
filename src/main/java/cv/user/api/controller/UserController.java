@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @CrossOrigin
@@ -23,6 +25,8 @@ import java.util.*;
 public class UserController {
     @Autowired
     private AppUserRepo userRepo;
+    @Autowired
+    private BusinessTypeRepo businessTypeRepo;
     @Autowired
     private VRoleMenuRepo vRoleMenuRepo;
     @Autowired
@@ -455,4 +459,28 @@ public class UserController {
         return Mono.justOrEmpty(companyInfoService.yearEnd(end));
     }
 
+    @GetMapping("/getUserByDate")
+    public Flux<?> getUserByDate(@RequestParam Date updatedDate) {
+        return Flux.fromIterable(userRepo.getUserByDate(updatedDate));
+    }
+
+    @GetMapping("/getBusinessTypeByDate")
+    public Flux<?> getBusinessTypeByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(businessTypeRepo.getBusinessTypeByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getCompanyInfoByDate")
+    public Flux<?> getCompanyInfoByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(companyInfoRepo.getCompanyInfoByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getCurrencyByDate")
+    public Flux<?> getCurrencyByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(currencyRepo.getCurrencyByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getDepartmentByDate")
+    public Flux<?> getDepartmentByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(departmentRepo.getDepartmentByDate(Util1.toDate(updatedDate)));
+    }
 }
