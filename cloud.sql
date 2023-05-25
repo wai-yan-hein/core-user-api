@@ -104,41 +104,41 @@ create table exchange_rate (
 drop view if exists v_role_company;
 create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
 
-alter table cv_user_yzn.appuser
+alter table appuser
 add column updated_date datetime null;
 
-alter table cv_user_yzn.business_type
+alter table business_type
 add column updated_date datetime null;
 
-alter table cv_user_yzn.company_info
+alter table company_info
 add column updated_date datetime null;
 
-alter table cv_user_yzn.currency
+alter table currency
 add column updated_date datetime null;
 
-alter table cv_user_yzn.department
+alter table department
 add column updated_date datetime null;
 
-alter table cv_user_yzn.mac_prop
+alter table mac_prop
 add column updated_date datetime null;
 
-alter table cv_user_yzn.menu
+alter table menu
 add column updated_date datetime null;
 
-alter table cv_user_yzn.menu
+alter table menu
 add column updated_date datetime null;
 
-alter table cv_user_yzn.privilege_company
+alter table privilege_company
 add column updated_date datetime null;
 
-alter table cv_user_yzn.privilege_menu
+alter table privilege_menu
 add column updated_date datetime null;
 
-alter table cv_user_yzn.project
+alter table project
 add column updated_date datetime null;
 
-alter table cv_user_yzn.role
+alter table role
 add column updated_date datetime null;
 
-alter table cv_user_yzn.role_prop
+alter table role_prop
 add column updated_date datetime null;
