@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface AppUserRepo extends JpaRepository<AppUser, String> {
@@ -12,5 +13,5 @@ public interface AppUserRepo extends JpaRepository<AppUser, String> {
     AppUser login(@Param("userName") String userName, @Param("password") String password);
 
     @Query("select o from AppUser o where o.updatedDate > :updatedDate")
-    List<AppUser> getUserByDate(@Param("updatedDate") String updatedDate);
+    List<AppUser> getUserByDate(@Param("updatedDate") Timestamp updatedDate);
 }

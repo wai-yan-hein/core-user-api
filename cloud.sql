@@ -104,46 +104,46 @@ create table exchange_rate (
 drop view if exists v_role_company;
 create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
 
-alter table cv_user_yzn.appuser
-add column updated_date timestamp not null;
+alter table appuser
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.business_type
-add column updated_date timestamp not null;
+alter table business_type
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.company_info
-add column updated_date timestamp not null;
+alter table company_info
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.currency
-add column updated_date timestamp not null;
+alter table currency
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-ALTER TABLE cv_user_yzn.department
+ALTER TABLE department
 DROP COLUMN updated_date;
-alter table cv_user_yzn.department
-add column updated_date timestamp not null;
+alter table department
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.mac_prop
-add column updated_date timestamp not null;
+alter table mac_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.menu
-add column updated_date timestamp not null;
+alter table menu
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.privilege_company
-add column updated_date timestamp not null;
+alter table privilege_company
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.privilege_menu
-add column updated_date timestamp not null;
+alter table privilege_menu
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.project
-add column updated_date timestamp not null;
+alter table project
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.role
-add column updated_date timestamp not null;
+alter table role
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.role_prop
-add column updated_date timestamp not null;
+alter table role_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.seq_table
-add column updated_date timestamp not null;
+alter table seq_table
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-alter table cv_user_yzn.sys_prop
-add column updated_date timestamp not null;
+alter table sys_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();

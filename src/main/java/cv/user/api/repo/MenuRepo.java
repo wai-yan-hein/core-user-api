@@ -1,12 +1,11 @@
 package cv.user.api.repo;
 
-import cv.user.api.entity.MachineProperty;
 import cv.user.api.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface MenuRepo extends JpaRepository<Menu, String> {
@@ -19,7 +18,7 @@ public interface MenuRepo extends JpaRepository<Menu, String> {
     @Query("select o from Menu o where o.key.compCode = :compCode")
     List<Menu> getMenu(@Param("compCode") String compCode);
 
-    @Query("select o from Menu o where date(o.updatedDate) > :updatedDate")
-    List<Menu> getMenuByDate(@Param("updatedDate") Date updatedDate);
+    @Query("select o from Menu o where o.updatedDate > :updatedDate")
+    List<Menu> getMenuByDate(@Param("updatedDate") Timestamp updatedDate);
 
 }
