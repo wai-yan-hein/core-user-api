@@ -43,7 +43,7 @@ public class CompanyInfo {
     @Column(name = "year_end_date")
     private Date yearEndDate;
     @Column(name = "updated_date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
     @Transient
     private String exampleCompany;
