@@ -351,7 +351,6 @@ public class UserController {
     private void getRoleMenuChild(VRoleMenu parent) {
         List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
-        log.info("Parent Menu Code => " + parent.getMenuCode());
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getRoleMenuChild(role);
