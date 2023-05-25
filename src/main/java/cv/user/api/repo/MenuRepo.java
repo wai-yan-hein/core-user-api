@@ -19,7 +19,7 @@ public interface MenuRepo extends JpaRepository<Menu, String> {
     @Query("select o from Menu o where o.key.compCode = :compCode")
     List<Menu> getMenu(@Param("compCode") String compCode);
 
-    @Query("select o from Menu date(o.updated_date) > :updatedDate")
+    @Query("select o from Menu o where date(o.updatedDate) > :updatedDate")
     List<Menu> getMenuByDate(@Param("updatedDate") Date updatedDate);
 
 }

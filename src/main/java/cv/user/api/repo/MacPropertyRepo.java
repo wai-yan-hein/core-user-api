@@ -14,6 +14,6 @@ public interface MacPropertyRepo extends JpaRepository<MachineProperty, MachineP
     @Query("select o from MachineProperty o where o.key.macId =:macId ")
     List<MachineProperty> getMacProperty(@Param("macId") Integer macId);
 
-    @Query("select o from MachineProperty date(o.updated_date) > :updatedDate")
+    @Query("select o from MachineProperty o where date(o.updatedDate) > :updatedDate")
     List<MachineProperty> getMacPropertyByDate(@Param("updatedDate") Date updatedDate);
 }
