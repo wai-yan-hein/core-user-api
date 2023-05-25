@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -16,6 +17,9 @@ public class SystemProperty implements java.io.Serializable {
     private String propValue;
     @Column(name = "remark")
     private String remark;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
     public SystemProperty() {
     }
 

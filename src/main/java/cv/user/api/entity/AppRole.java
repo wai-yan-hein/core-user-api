@@ -1,5 +1,6 @@
 package cv.user.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "role")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppRole {
     @Id
     @Column(name = "role_code")
@@ -16,7 +18,7 @@ public class AppRole {
     private String roleName;
     @Transient
     private String exampleRole;
-    @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_date")
     private Date updatedDate;
 }

@@ -539,4 +539,9 @@ public class UserController {
     public Flux<?> getSeqTableByDate(@RequestParam String updatedDate) {
         return Flux.fromIterable(seqRepo.getSeqTableByDate(Timestamp.valueOf(updatedDate)));
     }
+
+    @GetMapping("/getSystemPropertyByDate")
+    public Flux<?> getSystemPropertyByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Timestamp.valueOf(updatedDate)));
+    }
 }
