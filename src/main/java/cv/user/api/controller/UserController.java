@@ -3,8 +3,8 @@ package cv.user.api.controller;
 import cv.user.api.common.ReturnObject;
 import cv.user.api.common.Util1;
 import cv.user.api.common.YearEnd;
-import cv.user.api.entity.*;
 import cv.user.api.entity.Currency;
+import cv.user.api.entity.*;
 import cv.user.api.repo.*;
 import cv.user.api.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @CrossOrigin
@@ -511,7 +509,7 @@ public class UserController {
 
     @GetMapping("/getPCByDate")
     public Flux<?> getPCByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Util1.toDate(updatedDate)));
+        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(updatedDate));
     }
 
     @GetMapping("/getPMByDate")
@@ -526,7 +524,7 @@ public class UserController {
 
     @GetMapping("/getRoleByDate")
     public Flux<?> getRoleByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(appRoleRepo.getRoleByDate(Util1.toDate(updatedDate)));
+        return Flux.fromIterable(appRoleRepo.getRoleByDate(updatedDate));
     }
 
     @GetMapping("/getRolePropByDate")
