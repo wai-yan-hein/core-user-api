@@ -13,6 +13,6 @@ public interface PrivilegeCompanyRepo extends JpaRepository<PrivilegeCompany, PC
     @Query("select o from PrivilegeCompany o where o.key.roleCode = :roleCode")
     List<PrivilegeCompany> getRoleCompany(@Param("roleCode") String roleCode);
 
-    @Query("select o from PrivilegeCompany date(o.updated_date) > :updatedDate")
+    @Query("select o from PrivilegeCompany o where date(o.updatedDate) > :updatedDate")
     List<PrivilegeCompany> getPCByDate(@Param("updatedDate") Date updatedDate);
 }

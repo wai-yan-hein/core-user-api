@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ProjectRepo extends JpaRepository<Project, ProjectKey> {
     
-    @Query("select o from Project date(o.updated_date) > :updatedDate")
+    @Query("select o from Project o where date(o.updatedDate) > :updatedDate")
     List<Project> getProjectByDate(@Param("updatedDate") Date updatedDate);
 
 }

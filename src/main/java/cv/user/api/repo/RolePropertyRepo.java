@@ -15,6 +15,6 @@ public interface RolePropertyRepo extends JpaRepository<RoleProperty, RoleProper
     List<RoleProperty> getRoleProperty(@Param("roleCode") String roleCode);
     @Query("select o from RoleProperty o where o.key.compCode = :compCode")
     List<RoleProperty> getRole(@Param("compCode") String compCode);
-    @Query("select o from RoleProperty date(o.updated_date) > :updatedDate")
+    @Query("select o from RoleProperty o where date(o.updatedDate) > :updatedDate")
     List<RoleProperty> getRolePropByDate(@Param("updatedDate") Date updatedDate);
 }

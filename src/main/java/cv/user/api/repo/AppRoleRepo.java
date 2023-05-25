@@ -9,6 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface AppRoleRepo extends JpaRepository<AppRole, String> {
-    @Query("select o from AppRole date(o.updated_date) > :updatedDate")
+    @Query("select o from AppRole o where date(o.updatedDate) > :updatedDate")
     List<AppRole> getRoleByDate(@Param("updatedDate") Date updatedDate);
 }

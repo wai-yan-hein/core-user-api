@@ -17,7 +17,7 @@ public interface PrivilegeMenuRepo extends JpaRepository<PrivilegeMenu, PMKey> {
     @Query("select o from PrivilegeMenu o where o.key.compCode=:compCode")
     List<PrivilegeMenu> getPrivilegeCompany(@Param("compCode") String compCode);
 
-    @Query("select o from PrivilegeMenu date(o.updated_date) > :updatedDate")
+    @Query("select o from PrivilegeMenu o where date(o.updatedDate) > :updatedDate")
     List<PrivilegeMenu> getPMByDate(@Param("updatedDate") Date updatedDate);
 
 }
