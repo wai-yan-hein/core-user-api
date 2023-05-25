@@ -147,3 +147,9 @@ add column updated_date timestamp not null default current_timestamp() ON UPDATE
 
 alter table sys_prop
 add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table exchange_rate
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table mac_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
