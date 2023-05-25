@@ -153,3 +153,6 @@ add column updated_date timestamp not null default current_timestamp() ON UPDATE
 
 alter table mac_prop
 add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table machine_info
+add column mac_address varchar(255) null after pro_update;

@@ -87,14 +87,14 @@ public class UserController {
     }
 
     @GetMapping("/get-mac-info")
-    public ResponseEntity<MachineInfo> getMacInfo(@RequestParam String macName) {
+    public Mono<MachineInfo> getMacInfo(@RequestParam String macName) {
         MachineInfo mac = new MachineInfo();
         mac.setMacId(0);
         List<MachineInfo> byName = machineInfoRepo.findByName(macName);
         if (!byName.isEmpty()) {
             mac = byName.get(0);
         }
-        return ResponseEntity.ok(mac);
+        return Mono.justOrEmpty(mac);
     }
 
     @GetMapping("/get-mac-list")
@@ -451,11 +451,10 @@ public class UserController {
     }
 
     @GetMapping(path = "/searchExchange")
-    public Flux<?> searchExchange(@RequestParam String startDate, @RequestParam String endDate,
-                                @RequestParam String targetCur, @RequestParam String compCode) {
-        List<ExchangeRate> list =exchangeRateService.search(startDate, endDate, targetCur, compCode);
+    public Flux<?> searchExchange(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String targetCur, @RequestParam String compCode) {
+        List<ExchangeRate> list = exchangeRateService.search(startDate, endDate, targetCur, compCode);
         list.forEach((t) -> {
-            t.setExRate(t.getHomeFactor()/t.getTargetFactor());
+            t.setExRate(t.getHomeFactor() / t.getTargetFactor());
         });
         return Flux.fromIterable(list);
     }
