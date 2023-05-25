@@ -105,40 +105,45 @@ drop view if exists v_role_company;
 create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
 
 alter table cv_user_yzn.appuser
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.business_type
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.company_info
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.currency
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
+ALTER TABLE cv_user_yzn.department
+DROP COLUMN updated_date;
 alter table cv_user_yzn.department
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.mac_prop
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.menu
-add column updated_date datetime null;
-
-alter table cv_user_yzn.menu
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.privilege_company
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.privilege_menu
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.project
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.role
-add column updated_date datetime null;
+add column updated_date timestamp not null;
 
 alter table cv_user_yzn.role_prop
-add column updated_date datetime null;
+add column updated_date timestamp not null;
+
+alter table cv_user_yzn.seq_table
+add column updated_date timestamp not null;
+
+alter table cv_user_yzn.sys_prop
+add column updated_date timestamp not null;

@@ -70,6 +70,8 @@ public class UserController {
     @Autowired
     private ProjectRepo projectRepo;
     @Autowired
+    private SeqRepo seqRepo;
+    @Autowired
     private ExchangeRateService exchangeRateService;
     private final ReturnObject ro = new ReturnObject();
 
@@ -463,7 +465,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserByDate")
-    public Flux<?> getUserByDate(@RequestParam Date updatedDate) {
+    public Flux<?> getUserByDate(@RequestParam String updatedDate) {
         return Flux.fromIterable(userRepo.getUserByDate(updatedDate));
     }
 
@@ -530,5 +532,10 @@ public class UserController {
     @GetMapping("/getRolePropByDate")
     public Flux<?> getRolePropByDate(@RequestParam String updatedDate) {
         return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getSeqTableByDate")
+    public Flux<?> getSeqTableByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(seqRepo.getSeqTableByDate(Util1.toDate(updatedDate)));
     }
 }

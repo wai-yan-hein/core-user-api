@@ -8,6 +8,7 @@ package cv.user.api.entity;
 import lombok.*;
 import org.hibernate.Hibernate;
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,9 @@ public class SeqTable implements java.io.Serializable {
     private SeqKey key;
     @Column(name = "seq_no")
     private Integer seqNo;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
     @Override
     public boolean equals(Object o) {

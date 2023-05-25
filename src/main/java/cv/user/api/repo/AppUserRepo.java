@@ -13,5 +13,5 @@ public interface AppUserRepo extends JpaRepository<AppUser, String> {
     AppUser login(@Param("userName") String userName, @Param("password") String password);
 
     @Query("select o from AppUser o where date(o.updatedDate) > :updatedDate")
-    List<AppUser> getUserByDate(@Param("updatedDate") Date updatedDate);
+    List<AppUser> getUserByDate(@Param("updatedDate") String updatedDate);
 }
