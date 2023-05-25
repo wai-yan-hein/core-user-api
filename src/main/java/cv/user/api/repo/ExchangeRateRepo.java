@@ -5,10 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ExchangeRateRepo extends JpaRepository<ExchangeRate, String> {
-    @Query("select o from ExchangeRate o where date(o.updatedDate) > :updatedDate")
-    List<ExchangeRate> getExchangeRateByDate(@Param("updatedDate") Date updatedDate);
+    @Query("select o from ExchangeRate o where o.updatedDate > :updatedDate")
+    List<ExchangeRate> getExchangeRateByDate(@Param("updatedDate") Timestamp updatedDate);
 }
