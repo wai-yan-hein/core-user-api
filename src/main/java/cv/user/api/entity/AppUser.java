@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,4 +29,7 @@ public class AppUser {
     private String roleCode;
     @Column(name = "doctor_id")
     private String doctorId;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_date")
+    private Date updatedDate;
 }

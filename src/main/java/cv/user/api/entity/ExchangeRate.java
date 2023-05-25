@@ -12,6 +12,7 @@ import java.util.Date;
 @Table(name = "exchange_rate")
 public class ExchangeRate {
     @EmbeddedId
+    @Column(name = "ex_code")
     private ExchangeKey key;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "ex_date")
@@ -36,5 +37,7 @@ public class ExchangeRate {
     private String updatedBy;
     @Column(name = "deleted")
     private boolean deleted;
+    @Transient
+    private Double exRate;
 
 }
