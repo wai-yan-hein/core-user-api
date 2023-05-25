@@ -62,9 +62,13 @@ public class UserController {
     @Autowired
     private DepartmentRepo departmentRepo;
     @Autowired
+    private ExchangeRateRepo exchangeRateRepo;
+    @Autowired
     private BusinessTypeService businessTypeService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ProjectRepo projectRepo;
     @Autowired
     private ExchangeRateService exchangeRateService;
     private final ReturnObject ro = new ReturnObject();
@@ -482,5 +486,50 @@ public class UserController {
     @GetMapping("/getDepartmentByDate")
     public Flux<?> getDepartmentByDate(@RequestParam String updatedDate) {
         return Flux.fromIterable(departmentRepo.getDepartmentByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getExchangeRateByDate")
+    public Flux<?> getExchangeRateByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(exchangeRateRepo.getExchangeRateByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getMacPropertyByDate")
+    public Flux<?> getMacPropertyByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(macPropertyRepo.getMacPropertyByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getMachineInfoByDate")
+    public Flux<?> getMachineInfoByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getMenuByDate")
+    public Flux<?> getMenuByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(menuRepo.getMenuByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getPCByDate")
+    public Flux<?> getPCByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getPMByDate")
+    public Flux<?> getPMByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(privilegeMenuRepo.getPMByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getProjectByDate")
+    public Flux<?> getProjectByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(projectRepo.getProjectByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getRoleByDate")
+    public Flux<?> getRoleByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(appRoleRepo.getRoleByDate(Util1.toDate(updatedDate)));
+    }
+
+    @GetMapping("/getRolePropByDate")
+    public Flux<?> getRolePropByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Util1.toDate(updatedDate)));
     }
 }

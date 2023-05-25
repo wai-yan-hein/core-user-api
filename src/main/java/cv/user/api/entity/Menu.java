@@ -3,6 +3,7 @@ package cv.user.api.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -27,6 +28,9 @@ public class Menu  {
     private String account;
     @Column(name = "order_by")
     private Integer orderBy;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
     @Transient
     private List<Menu> child;
 }

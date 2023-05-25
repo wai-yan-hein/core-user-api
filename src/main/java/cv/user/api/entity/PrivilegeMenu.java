@@ -2,6 +2,7 @@ package cv.user.api.entity;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -9,6 +10,10 @@ import javax.persistence.*;
 public class PrivilegeMenu implements java.io.Serializable {
     @EmbeddedId
     private PMKey key;
+    @Column(name = "allow")
     private boolean allow;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
 }
