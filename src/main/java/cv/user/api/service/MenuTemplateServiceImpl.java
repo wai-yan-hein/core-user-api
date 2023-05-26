@@ -22,14 +22,18 @@ public class MenuTemplateServiceImpl implements MenuTemplateService {
             if (key.getMenuId() == null) {
                 key.setMenuId(repo.findMaxId());
             }
-            return repo.save(menu);
         }
-        return null;
+        return repo.save(menu);
     }
 
     @Override
     public List<MenuTemplate> getMenu(Integer busId) {
         return getMenuTree(busId);
+    }
+
+    @Override
+    public List<MenuTemplate> findAll(Integer busId) {
+        return repo.findAll(busId);
     }
 
     private List<MenuTemplate> getMenuTree(Integer busId) {

@@ -77,3 +77,82 @@ create table project (
   project_status varchar(15) not null,
   primary key (project_no,comp_code)
 ) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
+
+alter table appuser
+add column doctor_id varchar(15) null after phone,
+change column role_code role_code varchar(15) null ,
+drop primary key,
+add primary key (user_code);
+
+
+create table exchange_rate (
+  ex_code varchar(15) not null,
+  comp_code varchar(15) not null,
+  ex_date timestamp null default null,
+  home_factor double default null,
+  home_cur varchar(15) default null,
+  target_factor double default null,
+  target_cur varchar(15) default null,
+  created_date timestamp null default null,
+  created_by varchar(15) default null,
+  updated_date timestamp null default null,
+  updated_by varchar(15) default null,
+  deleted bit(1) not null default b'0',
+  primary key (ex_code,comp_code)
+) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
+
+drop view if exists v_role_company;
+create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
+
+alter table appuser
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table business_type
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table company_info
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table currency
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+ALTER TABLE department
+DROP COLUMN updated_date;
+alter table department
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table mac_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table menu
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table privilege_company
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table privilege_menu
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table project
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table role
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table role_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table seq_table
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table sys_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table exchange_rate
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table mac_prop
+add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
+
+alter table machine_info
+add column mac_address varchar(255) null after pro_update;

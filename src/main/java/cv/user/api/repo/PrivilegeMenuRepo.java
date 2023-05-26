@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface PrivilegeMenuRepo extends JpaRepository<PrivilegeMenu, PMKey> {
@@ -14,5 +15,8 @@ public interface PrivilegeMenuRepo extends JpaRepository<PrivilegeMenu, PMKey> {
 
     @Query("select o from PrivilegeMenu o where o.key.compCode=:compCode")
     List<PrivilegeMenu> getPrivilegeCompany(@Param("compCode") String compCode);
+
+    @Query("select o from PrivilegeMenu o where o.updatedDate > :updatedDate")
+    List<PrivilegeMenu> getPMByDate(@Param("updatedDate") Timestamp updatedDate);
 
 }

@@ -5,11 +5,12 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+
 @Data
 @Embeddable
-public class ProjectKey implements Serializable {
-    @Column(name = "project_no")
-    private String projectNo;
+public class ExchangeKey implements Serializable {
+    @Column(name = "ex_code")
+    private String exCode;
     @Column(name = "comp_code")
     private String compCode;
 }

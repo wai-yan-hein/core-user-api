@@ -6,7 +6,9 @@ package cv.user.api.common;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -54,6 +56,29 @@ public class Util1 {
     }
     public static boolean isNullOrEmpty(Object obj) {
         return obj == null || obj.toString().isEmpty();
+    }
+
+    public static Date toDateTime(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat f2 = new SimpleDateFormat("dd/MM/yyyy");
+        LocalDateTime now = LocalDateTime.now();
+        String strDate = f2.format(date) + " " + now.getHour() + ":"
+                + now.getMinute() + ":" + now.getSecond();
+        try {
+            date = formatter.parse(strDate);
+        } catch (ParseException ex) {
+            log.error(String.format("toDateTime: %s", ex.getMessage()));
+        }
+        return date;
+    }
+
+    public static Date toDate(String str) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return dateFormat.parse(str);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

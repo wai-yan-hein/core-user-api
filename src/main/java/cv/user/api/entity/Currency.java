@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Getter
@@ -26,6 +27,9 @@ public class Currency implements java.io.Serializable {
     private String curGainAcc;
     @Column(name = "cur_lost_acc")
     private String curLostAcc;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
     @Override
     public boolean equals(Object o) {

@@ -9,7 +9,6 @@ import java.util.Date;
 @Table(name = "project")
 public class Project {
     @EmbeddedId
-    @Column(name = "project_no")
     private ProjectKey key;
     @Column(name = "project_name")
     private String projectName;
@@ -21,4 +20,7 @@ public class Project {
     private Double budget;
     @Column(name = "project_status")
     private String projectStatus;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 }

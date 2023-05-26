@@ -30,6 +30,7 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
     private RolePropertyRepo rolePropertyRepo;
     @Autowired
     private MenuService menuService;
+    @Autowired MenuTemplateService menuTemplateService;
     @Autowired
     private PrivilegeMenuRepo privilegeMenuRepo;
 
@@ -41,8 +42,55 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
             info.setUserCode(Util1.isNull(info.getUserCode(), compCode));
             updateRole(compCode);
 
+            saveMenu(compCode,info.getBusId());
+
         }
         return infoRepo.save(info);
+    }
+    private void saveMenu(String compCode,Integer busId){
+        if(busId!=null){
+            //get menu template with bus id
+            List<MenuTemplate> mTemList = menuTemplateService.findAll(busId);
+            mTemList.forEach(m -> {
+                saveMenuAndPrivilege(m,compCode);
+            });
+        }
+    }
+
+
+
+    private void saveMenuAndPrivilege(MenuTemplate m, String compCode) {
+        Menu menu = new Menu();
+        MenuKey mKey = new MenuKey();
+        mKey.setMenuCode(m.getKey().getMenuId().toString());
+        mKey.setCompCode(compCode);
+        menu.setKey(mKey);
+        menu.setUserCode(null); //
+        menu.setMenuClass(m.getMenuClass());
+        menu.setMenuName(m.getMenuName());
+        menu.setMenuUrl(m.getMenuUrl());
+        menu.setParentMenuCode(m.getParentMenuId() == 0? "1" : m.getParentMenuId().toString());//
+        menu.setMenuType(m.getMenuType());
+        menu.setAccount(m.getAccount());
+        menu.setOrderBy(m.getOrderBy());
+        menu= menuService.save(menu);
+        savePrivileges(menu.getKey().getMenuCode(), compCode);
+    }
+
+    private void savePrivileges(String menuCode, String compCode) {
+        List<AppRole> roles = roleRepo.findAll();
+        if (!roles.isEmpty()) {
+            roles.forEach(r -> {
+                PrivilegeMenu p = new PrivilegeMenu();
+                PMKey key = new PMKey();
+                key.setCompCode(compCode);
+                key.setRoleCode(r.getRoleCode());
+                key.setMenuCode(menuCode);
+                p.setKey(key);
+                p.setAllow(true);
+                privilegeMenuRepo.save(p);
+            });
+        }
     }
 
     @Override

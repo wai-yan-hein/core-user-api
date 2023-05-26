@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Lenovo
@@ -25,5 +26,8 @@ public class RoleProperty implements Serializable {
     private String propValue;
     @Column(name = "remark")
     private String remark;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
 }

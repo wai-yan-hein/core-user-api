@@ -2,6 +2,7 @@ package cv.user.api.entity;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.Date;
 
 
 @Data
@@ -14,5 +15,8 @@ public class PrivilegeCompany implements java.io.Serializable {
     private boolean allow;
     @Transient
     private String compName;
+    @Column(name = "updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
 }

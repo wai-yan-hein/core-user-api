@@ -3,6 +3,7 @@ package cv.user.api.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 
 @Data
@@ -20,4 +21,7 @@ public class Department {
     private String inventoryQ;
     @Column(name = "acc_queue")
     private String accountQ;
+    @Column(name="updated_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 }
