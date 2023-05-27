@@ -83,7 +83,8 @@ public class UserController {
 
     @GetMapping("/login")
     public Mono<?> login(@RequestParam String userName, @RequestParam String password) {
-        return Mono.justOrEmpty(userRepo.login(userName, password));
+        List<AppUser> list = userRepo.login(userName, password);
+        return Mono.justOrEmpty(list.isEmpty() ? null : list.get(0));
     }
 
     @GetMapping("/get-mac-info")
@@ -116,8 +117,8 @@ public class UserController {
     }
 
     @PostMapping("/save-mac")
-    public ResponseEntity<MachineInfo> saveMacInfo(@RequestBody MachineInfo machineInfo) {
-        return ResponseEntity.ok(machineInfoRepo.save(machineInfo));
+    public Mono<?> saveMacInfo(@RequestBody MachineInfo machineInfo) {
+        return Mono.justOrEmpty(machineInfoRepo.save(machineInfo));
     }
 
     @PostMapping("/save-user")
