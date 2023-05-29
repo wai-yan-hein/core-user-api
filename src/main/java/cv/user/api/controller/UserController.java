@@ -29,10 +29,6 @@ public class UserController {
     @Autowired
     private BusinessTypeRepo businessTypeRepo;
     @Autowired
-    private VRoleMenuRepo vRoleMenuRepo;
-    @Autowired
-    private VRoleCompanyRepo vRoleCompanyRepo;
-    @Autowired
     private PrivilegeMenuRepo privilegeMenuRepo;
     @Autowired
     private RolePropertyRepo rolePropertyRepo;
@@ -73,7 +69,11 @@ public class UserController {
     @Autowired
     private SeqRepo seqRepo;
     @Autowired
+    private VRoleCompanyService vRoleCompanyService;
+    @Autowired
     private ExchangeRateService exchangeRateService;
+    @Autowired
+    private VRoleMenuService vRoleMenuService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -188,7 +188,7 @@ public class UserController {
 
     @GetMapping("/get-report")
     public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass, @RequestParam String compCode) {
-        return ResponseEntity.ok(vRoleMenuRepo.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
+        return ResponseEntity.ok(vRoleMenuService.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
     }
 
     @GetMapping("/get-role")
@@ -224,13 +224,13 @@ public class UserController {
 
     @GetMapping(path = "/get-role-company")
     public ResponseEntity<List<VRoleCompany>> getRoleCompany(@RequestParam String roleCode) {
-        List<VRoleCompany> property = vRoleCompanyRepo.getCompany(roleCode);
+        List<VRoleCompany> property = vRoleCompanyService.getPrivilegeCompany(roleCode);
         return ResponseEntity.ok(property);
     }
 
     @GetMapping(path = "/get-privilege-role-company")
     public Flux<?> getPRoleCompany(@RequestParam String roleCode) {
-        return Flux.fromIterable(vRoleCompanyRepo.getCompany(roleCode));
+        return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode));
     }
 
     @PostMapping(path = "/save-role-property")
@@ -329,7 +329,7 @@ public class UserController {
     }
 
     private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(roleCode, "1", compCode);
+        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getRoleMenuChild(role);
@@ -339,7 +339,7 @@ public class UserController {
     }
 
     private List<VRoleMenu> getMenu(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(roleCode, "1", compCode);
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getMenuChild(role);
@@ -349,7 +349,7 @@ public class UserController {
     }
 
     private void getMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
@@ -359,7 +359,7 @@ public class UserController {
     }
 
     private void getRoleMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuRepo.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
+        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
