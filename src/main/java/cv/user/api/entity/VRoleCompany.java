@@ -30,6 +30,8 @@ public class VRoleCompany {
     private String currency;
     @Column(name = "allow")
     private boolean allow;
+    @Column(name = "active")
+    private boolean active;
     @Column(name = "batch_lock")
     private boolean batchLock;
     @Column(name = "year_end_date")
