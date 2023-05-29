@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AppUserRepo extends JpaRepository<AppUser, String> {
     @Query("select o from AppUser o where o.userShortName = :userName and o.password =:password")
-    AppUser login(@Param("userName") String userName, @Param("password") String password);
+    List<AppUser> login(@Param("userName") String userName, @Param("password") String password);
 
     @Query("select o from AppUser o where o.updatedDate > :updatedDate")
     List<AppUser> getUserByDate(@Param("updatedDate") Timestamp updatedDate);
