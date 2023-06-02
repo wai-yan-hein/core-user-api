@@ -43,6 +43,8 @@ public class UserController {
     @Autowired
     private MachineInfoRepo machineInfoRepo;
     @Autowired
+    private MachineService machineService;
+    @Autowired
     private PrivilegeCompanyRepo privilegeCompanyRepo;
     @Autowired
     private CompanyInfoRepo companyInfoRepo;
@@ -87,15 +89,13 @@ public class UserController {
         return Mono.justOrEmpty(list.isEmpty() ? null : list.get(0));
     }
 
-    @GetMapping("/get-mac-info")
-    public Mono<MachineInfo> getMacInfo(@RequestParam String macName) {
-        MachineInfo mac = new MachineInfo();
-        mac.setMacId(0);
-        List<MachineInfo> byName = machineInfoRepo.findByName(macName);
-        if (!byName.isEmpty()) {
-            mac = byName.get(0);
+    @GetMapping("/registerMac")
+    public Mono<MachineInfo> getMacInfo(@RequestParam String serialNo) {
+        List<MachineInfo> list = machineInfoRepo.findBySerialNo(serialNo);
+        if (!list.isEmpty()) {
+            return Mono.just(list.get(0));
         }
-        return Mono.justOrEmpty(mac);
+        return Mono.just(new MachineInfo());
     }
 
     @GetMapping("/get-mac-list")
@@ -118,7 +118,7 @@ public class UserController {
 
     @PostMapping("/save-mac")
     public Mono<?> saveMacInfo(@RequestBody MachineInfo machineInfo) {
-        return Mono.justOrEmpty(machineInfoRepo.save(machineInfo));
+        return Mono.justOrEmpty(machineService.save(machineInfo));
     }
 
     @PostMapping("/save-user")
@@ -257,9 +257,9 @@ public class UserController {
     }
 
     @GetMapping("/find-currency")
-    public ResponseEntity<Currency> findCurrency(@RequestParam String curCode) {
+    public Mono<?> findCurrency(@RequestParam String curCode) {
         Optional<Currency> cur = currencyRepo.findById(curCode);
-        return ResponseEntity.ok(cur.orElse(null));
+        return Mono.justOrEmpty(cur.orElse(null));
     }
 
 
