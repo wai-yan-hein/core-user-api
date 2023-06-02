@@ -110,8 +110,7 @@ add column updated_date timestamp not null default current_timestamp() ON UPDATE
 alter table currency
 add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
-ALTER TABLE department
-DROP COLUMN updated_date;
+
 alter table department
 add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
 
@@ -153,5 +152,3 @@ add column mac_address varchar(255) null after pro_update;
 
 alter table machine_info
 add column serial_no varchar(255) not null after mac_id,
-drop primary key,
-add primary key (mac_id, serial_no);
