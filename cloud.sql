@@ -151,4 +151,4 @@ alter table machine_info
 add column mac_address varchar(255) null after pro_update;
 
 alter table machine_info
-add column serial_no varchar(255) not null after mac_id,
+add column serial_no varchar(255) not null after mac_id;
