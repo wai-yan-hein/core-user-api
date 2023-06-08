@@ -1,8 +1,8 @@
 package cv.user.api.entity;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Data

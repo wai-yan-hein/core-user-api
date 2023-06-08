@@ -22,7 +22,7 @@ public class SeqServiceImpl implements SeqService {
 
     @Override
     public SeqTable findByKey(SeqKey key) {
-        return seqRepo.getById(key);
+        return seqRepo.findById(key).orElse(null);
     }
 
     @Override
