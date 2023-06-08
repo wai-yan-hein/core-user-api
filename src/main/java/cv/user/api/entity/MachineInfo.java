@@ -10,7 +10,6 @@ import java.util.Date;
 @Table(name = "machine_info")
 public class MachineInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mac_id")
     private Integer macId;
     @Column(name = "mac_name")
@@ -24,4 +23,8 @@ public class MachineInfo {
     private boolean proUpdate;
     @Column(name = "mac_address")
     private String macAddress;
+    @Column(name = "serial_no")
+    private String serialNo;
+
+
 }

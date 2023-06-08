@@ -32,12 +32,6 @@ update role_prop
 set comp_code ='01';
 delete from role where role_name='';
 
-drop view if exists v_role_company;
-create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
-
-drop view if exists v_role_menu;
-create  view v_role_menu as select p.menu_code as menu_code,p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,m.menu_name as menu_name,m.menu_url as menu_url,m.menu_type as menu_type,m.menu_class as menu_class,m.account as account,m.parent_menu_code as parent_menu_code,m.order_by as order_by from (privilege_menu p join menu m on(p.menu_code = m.menu_code and p.comp_code = m.comp_code));
-
 alter table company_info
 add column created_by varchar(15) null after currency,
 add column created_date timestamp null after created_by,
@@ -156,3 +150,8 @@ add column updated_date timestamp not null default current_timestamp() ON UPDATE
 
 alter table machine_info
 add column mac_address varchar(255) null after pro_update;
+
+alter table machine_info
+add column serial_no varchar(255) not null after mac_id,
+drop primary key,
+add primary key (mac_id, serial_no);
