@@ -1,11 +1,13 @@
 package cv.user.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.util.Date;
 
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "mac_prop")
 public class MachineProperty {

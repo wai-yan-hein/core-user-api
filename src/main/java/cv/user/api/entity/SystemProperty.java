@@ -1,13 +1,13 @@
 package cv.user.api.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "sys_prop")
 public class SystemProperty implements java.io.Serializable {

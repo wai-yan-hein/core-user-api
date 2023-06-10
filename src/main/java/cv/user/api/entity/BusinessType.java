@@ -1,13 +1,16 @@
 package cv.user.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
 import java.util.Date;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "business_type")
+
 public class BusinessType {
     @Id
     @Column(name = "bus_id")

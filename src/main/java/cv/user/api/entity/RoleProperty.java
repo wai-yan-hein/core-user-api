@@ -5,6 +5,7 @@
  */
 package cv.user.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import jakarta.persistence.*;
@@ -16,6 +17,7 @@ import java.util.Date;
  * @author Lenovo
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "role_prop")
 public class RoleProperty implements Serializable {

@@ -5,6 +5,7 @@
  */
 package cv.user.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author SAI
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Embeddable
 public class SeqKey implements Serializable {
     @Column(name = "option")
