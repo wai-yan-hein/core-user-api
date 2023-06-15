@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MenuRepo extends JpaRepository<Menu, String> {
@@ -19,6 +20,6 @@ public interface MenuRepo extends JpaRepository<Menu, String> {
     List<Menu> getMenu(@Param("compCode") String compCode);
 
     @Query("select o from Menu o where o.updatedDate > :updatedDate")
-    List<Menu> getMenuByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<Menu> getMenuByDate(@Param("updatedDate") LocalDateTime updatedDate);
 
 }

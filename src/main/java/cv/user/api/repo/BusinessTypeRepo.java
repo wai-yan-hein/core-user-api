@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BusinessTypeRepo extends JpaRepository<BusinessType, Integer> {
@@ -13,5 +14,5 @@ public interface BusinessTypeRepo extends JpaRepository<BusinessType, Integer> {
     Integer findMaxId();
 
     @Query("select o from BusinessType o where o.updatedDate > :updatedDate")
-    List<BusinessType> getBusinessTypeByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<BusinessType> getBusinessTypeByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }

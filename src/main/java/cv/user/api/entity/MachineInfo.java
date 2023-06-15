@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -18,9 +20,8 @@ public class MachineInfo {
     private String machineName;
     @Column(name = "mac_ip")
     private String machineIp;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
     @Column(name = "pro_update")
     private boolean proUpdate;
     @Column(name = "mac_address")

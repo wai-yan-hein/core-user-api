@@ -8,6 +8,7 @@ package cv.user.api.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -22,8 +23,7 @@ public class SeqTable {
     private SeqKey key;
     @Column(name = "seq_no")
     private Integer seqNo;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
 
 }

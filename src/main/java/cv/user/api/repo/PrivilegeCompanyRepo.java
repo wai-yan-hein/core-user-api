@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PrivilegeCompanyRepo extends JpaRepository<PrivilegeCompany, PCKey> {
@@ -14,5 +15,5 @@ public interface PrivilegeCompanyRepo extends JpaRepository<PrivilegeCompany, PC
     List<PrivilegeCompany> getRoleCompany(@Param("roleCode") String roleCode);
 
     @Query("select o from PrivilegeCompany o where o.updatedDate > :updatedDate")
-    List<PrivilegeCompany> getPCByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<PrivilegeCompany> getPCByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }

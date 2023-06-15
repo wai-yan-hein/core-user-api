@@ -11,6 +11,7 @@ import lombok.Data;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -28,8 +29,7 @@ public class RoleProperty implements Serializable {
     private String propValue;
     @Column(name = "remark")
     private String remark;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
 
 }

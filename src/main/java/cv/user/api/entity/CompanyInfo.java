@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -36,17 +37,16 @@ public class CompanyInfo {
     private boolean active;
     @Column(name = "created_by")
     private String createdBy;
-    @Column(name = "created_date")
-    private Date createdDate;
+    @Column(name = "created_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdDate;
     @Column(name = "bus_id")
     private Integer busId;
     @Column(name = "batch_lock")
     private boolean batchLock;
     @Column(name = "year_end_date")
     private Date yearEndDate;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
     @Transient
     private String exampleCompany;
 }

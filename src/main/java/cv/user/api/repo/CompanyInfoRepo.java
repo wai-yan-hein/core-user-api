@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CompanyInfoRepo extends JpaRepository<CompanyInfo, String> {
@@ -13,5 +14,5 @@ public interface CompanyInfoRepo extends JpaRepository<CompanyInfo, String> {
     List<CompanyInfo> getActiveCompany();
 
     @Query("select o from CompanyInfo o where o.updatedDate > :updatedDate")
-    List<CompanyInfo> getCompanyInfoByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<CompanyInfo> getCompanyInfoByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }
