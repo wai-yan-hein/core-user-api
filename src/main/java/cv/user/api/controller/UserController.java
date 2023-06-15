@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -467,81 +468,81 @@ public class UserController {
 
     @GetMapping("/getUserByDate")
     public Flux<?> getUserByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(userRepo.getUserByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(userRepo.getUserByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getBusinessTypeByDate")
     public Flux<?> getBusinessTypeByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(businessTypeRepo.getBusinessTypeByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(businessTypeRepo.getBusinessTypeByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getCompanyInfoByDate")
     public Flux<?> getCompanyInfoByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(companyInfoRepo.getCompanyInfoByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(companyInfoRepo.getCompanyInfoByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getCurrencyByDate")
     public Flux<?> getCurrencyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(currencyRepo.getCurrencyByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(currencyRepo.getCurrencyByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getDepartmentByDate")
     public Flux<?> getDepartmentByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(departmentRepo.getDepartmentByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(departmentRepo.getDepartmentByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getExchangeRateByDate")
     public Flux<?> getExchangeRateByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(exchangeRateRepo.getExchangeRateByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(exchangeRateRepo.getExchangeRateByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getMacPropertyByDate")
     public Flux<?> getMacPropertyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(macPropertyRepo.getMacPropertyByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(macPropertyRepo.getMacPropertyByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getMachineInfoByDate")
     public Flux<?> getMachineInfoByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getMenuByDate")
     public Flux<?> getMenuByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(menuRepo.getMenuByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(menuRepo.getMenuByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getPCByDate")
     public Flux<?> getPCByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getPMByDate")
     public Flux<?> getPMByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(privilegeMenuRepo.getPMByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(privilegeMenuRepo.getPMByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getProjectByDate")
     public Flux<?> getProjectByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(projectRepo.getProjectByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(projectRepo.getProjectByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getRoleByDate")
     public Flux<?> getRoleByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(appRoleRepo.getRoleByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(appRoleRepo.getRoleByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getRolePropByDate")
     public Flux<?> getRolePropByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getSeqTableByDate")
     public Flux<?> getSeqTableByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(seqRepo.getSeqTableByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(seqRepo.getSeqTableByDate(Util1.toLocalDateTime(updatedDate)));
     }
 
     @GetMapping("/getSystemPropertyByDate")
     public Flux<?> getSystemPropertyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Timestamp.valueOf(updatedDate)));
+        return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Util1.toLocalDateTime(updatedDate)));
     }
 }

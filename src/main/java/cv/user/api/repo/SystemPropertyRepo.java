@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SystemPropertyRepo extends JpaRepository<SystemProperty, PropertyKey> {
@@ -15,5 +16,5 @@ public interface SystemPropertyRepo extends JpaRepository<SystemProperty, Proper
     List<SystemProperty> getSystemProperty(@Param("compCode") String compCode);
 
     @Query("select o from SystemProperty o where o.updatedDate > :updatedDate")
-    List<SystemProperty> getSystemPropertyByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<SystemProperty> getSystemPropertyByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MachineInfoRepo extends JpaRepository<MachineInfo, Integer> {
@@ -16,5 +17,5 @@ public interface MachineInfoRepo extends JpaRepository<MachineInfo, Integer> {
     @Query(value = "select ifnull(max(mac_id),1)+1 mac_id from machine_info", nativeQuery = true)
     Integer findMaxId();
     @Query("select o from MachineInfo o where o.updatedDate > :updatedDate")
-    List<MachineInfo> getMachineInfoByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<MachineInfo> getMachineInfoByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }

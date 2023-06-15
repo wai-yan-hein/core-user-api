@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,9 +17,8 @@ public class ExchangeRate {
     @EmbeddedId
     @Column(name = "ex_code")
     private ExchangeKey key;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "ex_date")
-    private Date exDate;
+    @Column(name = "ex_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime exDate;
     @Column(name = "home_factor")
     private Double homeFactor;
     @Column(name = "home_cur")
@@ -25,14 +27,12 @@ public class ExchangeRate {
     private Double targetFactor;
     @Column(name = "target_cur")
     private String targetCur;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private Date createdDate;
+    @Column(name = "created_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdDate;
     @Column(name = "created_by")
     private String createdBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_date")
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
     @Column(name = "updated_by")
     private String updatedBy;
     @Column(name = "deleted")

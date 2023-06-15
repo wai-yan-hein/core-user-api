@@ -5,10 +5,12 @@
 package cv.user.api.common;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -79,6 +81,11 @@ public class Util1 {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static LocalDateTime toLocalDateTime(String str) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(str, formatter);
     }
 
 }

@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DepartmentRepo extends JpaRepository<Department, Integer> {
     @Query("select o from Department o where o.updatedDate > :updatedDate")
-    List<Department> getDepartmentByDate(@Param("updatedDate") Timestamp updatedDate);
+    List<Department> getDepartmentByDate(@Param("updatedDate") LocalDateTime updatedDate);
 }

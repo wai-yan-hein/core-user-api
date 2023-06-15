@@ -3,6 +3,8 @@ package cv.user.api.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -17,8 +19,7 @@ public class PrivilegeCompany implements java.io.Serializable {
     private boolean allow;
     @Transient
     private String compName;
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedDate;
 
 }
