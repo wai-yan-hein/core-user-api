@@ -23,6 +23,7 @@ add column comp_code varchar(15) not null after role_code,
 drop primary key,
 add primary key (menu_code, role_code, comp_code);
 
+
 set sql_safe_updates=0;
 update privilege_menu
 set comp_code ='01';
@@ -38,8 +39,6 @@ add column created_date timestamp null after created_by,
 add column bus_id  int null after  created_date ,
 add column batch_lock bit(1) not null default 0 after bus_id,
 add column year_end_date date null after batch_lock;
-drop view if exists v_role_company;
-create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
 
 create table business_type (
   bus_id int(11) not null,
@@ -95,8 +94,6 @@ create table exchange_rate (
   primary key (ex_code,comp_code)
 ) engine=innodb default charset=utf8mb3 collate=utf8mb3_general_ci;
 
-drop view if exists v_role_company;
-create  view v_role_company as select p.role_code as role_code,p.comp_code as comp_code,p.allow as allow,com.name as name,com.phone as phone,com.address as address,com.start_date as start_date,com.end_date as end_date,com.currency as currency,com.batch_lock as batch_lock,com.year_end_date as year_end_date,com.active as active from (privilege_company p join company_info com on(p.comp_code = com.comp_code));
 
 alter table appuser
 add column updated_date timestamp not null default current_timestamp() ON UPDATE current_timestamp();
