@@ -5,11 +5,11 @@
 package cv.user.api.common;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,9 +28,11 @@ public class Util1 {
             return strValue;
         }
     }
+
     public static String getString(Object value) {
         return value == null ? null : value.toString();
     }
+
     public static int getInteger(Object number) {
         int value = 0;
         if (number != null) {
@@ -40,6 +42,7 @@ public class Util1 {
         }
         return value;
     }
+
     public static String toDateStr(Date date, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         String strDate = null;
@@ -56,22 +59,14 @@ public class Util1 {
     public static Date getTodayDate() {
         return Calendar.getInstance().getTime();
     }
+
     public static boolean isNullOrEmpty(Object obj) {
         return obj == null || obj.toString().isEmpty();
     }
 
-    public static Date toDateTime(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        SimpleDateFormat f2 = new SimpleDateFormat("dd/MM/yyyy");
+    public static LocalDateTime toDateTime(LocalDateTime date) {
         LocalDateTime now = LocalDateTime.now();
-        String strDate = f2.format(date) + " " + now.getHour() + ":"
-                + now.getMinute() + ":" + now.getSecond();
-        try {
-            date = formatter.parse(strDate);
-        } catch (ParseException ex) {
-            log.error(String.format("toDateTime: %s", ex.getMessage()));
-        }
-        return date;
+        return LocalDateTime.of(date.toLocalDate(), LocalTime.of(now.getHour(), now.getMinute(), now.getSecond()));
     }
 
     public static Date toDate(String str) {

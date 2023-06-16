@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -443,7 +442,7 @@ public class UserController {
     @PostMapping(path = "/saveExchange")
     public Mono<?> saveExchange(@RequestBody ExchangeRate rate) {
         rate.setExDate(Util1.toDateTime(rate.getExDate()));
-        rate.setCreatedDate(Util1.toDateTime(rate.getCreatedDate()));
+        rate.setCreatedDate(LocalDateTime.now());
         return Mono.justOrEmpty(exchangeRateService.save(rate));
     }
 

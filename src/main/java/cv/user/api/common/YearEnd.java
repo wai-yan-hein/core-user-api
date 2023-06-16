@@ -2,6 +2,7 @@ package cv.user.api.common;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -14,6 +15,6 @@ public class YearEnd {
     private boolean batchLock;
     private boolean opening;
     private String createBy;
-    private Date cratedDate;
+    private LocalDateTime createdDate;
     private String message;
 }
