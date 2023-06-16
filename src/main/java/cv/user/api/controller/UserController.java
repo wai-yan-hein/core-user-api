@@ -442,8 +442,8 @@ public class UserController {
 
     @PostMapping(path = "/saveExchange")
     public Mono<?> saveExchange(@RequestBody ExchangeRate rate) {
-        rate.setExDate(Util1.toDateTime(rate.getExDate()));
-        rate.setCreatedDate(Util1.toDateTime(rate.getCreatedDate()));
+        rate.setExDate(rate.getExDate());
+        rate.setCreatedDate(rate.getCreatedDate()); //Util1.toDateTime
         return Mono.justOrEmpty(exchangeRateService.save(rate));
     }
 
