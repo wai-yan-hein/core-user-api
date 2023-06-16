@@ -15,6 +15,6 @@ public class YearEnd {
     private boolean batchLock;
     private boolean opening;
     private String createBy;
-    private LocalDateTime cratedDate;
+    private LocalDateTime createdDate;
     private String message;
 }

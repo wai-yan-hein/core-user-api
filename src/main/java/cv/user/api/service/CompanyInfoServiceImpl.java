@@ -112,7 +112,7 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
             info.setCompPhone(ye.getCompPhone());
             info.setCurCode(ye.getCurCode());
             info.setCreatedBy(end.getCreateBy());
-            info.setCreatedDate(end.getCratedDate());
+            info.setCreatedDate(end.getCreatedDate());
             info.setStartDate(end.getStartDate());
             info.setEndDate(end.getEndDate());
             info = save(info);
