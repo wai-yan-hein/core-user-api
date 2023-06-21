@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class MachineServiceImpl implements MachineService{
@@ -18,5 +20,10 @@ public class MachineServiceImpl implements MachineService{
             info.setMacId(repo.findMaxId());
         }
         return repo.save(info);
+    }
+
+    @Override
+    public Optional<MachineInfo> findBySerialNo(String serialNo) {
+        return repo.findBySerialNo(serialNo);
     }
 }

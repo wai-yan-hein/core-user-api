@@ -5,15 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface MachineInfoRepo extends JpaRepository<MachineInfo, Integer> {
     @Query("select o from MachineInfo o where o.machineName = :name")
     List<MachineInfo> findByName(@Param("name") String macName);
-    @Query("select o from MachineInfo o where o.serialNo = :serialNo")
-    List<MachineInfo> findBySerialNo(@Param("serialNo") String serialNo);
+    Optional<MachineInfo> findBySerialNo(String serialNo);
     @Query(value = "select ifnull(max(mac_id),1)+1 mac_id from machine_info", nativeQuery = true)
     Integer findMaxId();
     @Query("select o from MachineInfo o where o.updatedDate > :updatedDate")

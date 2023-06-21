@@ -83,4 +83,8 @@ public class Util1 {
         return LocalDateTime.parse(str, formatter);
     }
 
+    public static String getPassword() {
+        return Util1.toDateStr(Util1.getTodayDate(), "yyyyMMdd");
+    }
+
 }

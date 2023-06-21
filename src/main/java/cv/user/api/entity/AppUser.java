@@ -1,19 +1,20 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Entity
 @Table(name = "appuser")
-public class AppUser {
+public class AppUser  {
     @Id
     @Column(name = "user_code")
     private String userCode;
@@ -33,4 +34,5 @@ public class AppUser {
     private String doctorId;
     @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedDate;
+
 }

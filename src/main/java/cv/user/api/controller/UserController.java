@@ -23,6 +23,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+
 public class UserController {
     @Autowired
     private AppUserRepo userRepo;
@@ -79,23 +80,21 @@ public class UserController {
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
-    public String hello() {
-        return "Hello Back.";
+    public Mono<?> hello() {
+        return Mono.just("Hello.");
     }
+
 
     @GetMapping("/login")
-    public Mono<?> login(@RequestParam String userName, @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestParam String userName, @RequestParam String password) {
         List<AppUser> list = userRepo.login(userName, password);
-        return Mono.justOrEmpty(list.isEmpty() ? null : list.get(0));
+        return ResponseEntity.ok(list.isEmpty() ? null : list.get(0));
     }
 
-    @GetMapping("/registerMac")
-    public Mono<MachineInfo> getMacInfo(@RequestParam String serialNo) {
-        List<MachineInfo> list = machineInfoRepo.findBySerialNo(serialNo);
-        if (!list.isEmpty()) {
-            return Mono.just(list.get(0));
-        }
-        return Mono.just(new MachineInfo());
+    @GetMapping("/checkSerialNo")
+    public Mono<?> checkSerialNo(@RequestParam String serialNo) {
+        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
+        return info.isEmpty() ? Mono.empty() : Mono.just(info);
     }
 
     @GetMapping("/get-mac-list")
@@ -114,11 +113,6 @@ public class UserController {
             machineInfoRepo.save(mac);
         }
         return "Success Release Program Update.";
-    }
-
-    @PostMapping("/save-mac")
-    public Mono<?> saveMacInfo(@RequestBody MachineInfo machineInfo) {
-        return Mono.justOrEmpty(machineService.save(machineInfo));
     }
 
     @PostMapping("/save-user")
@@ -252,8 +246,8 @@ public class UserController {
     }
 
     @GetMapping("/get-currency")
-    public ResponseEntity<List<Currency>> getCurrency() {
-        return ResponseEntity.ok(currencyRepo.findAll());
+    public Flux<?> getCurrency() {
+        return Flux.fromIterable(currencyRepo.findAll());
     }
 
     @GetMapping("/find-currency")
