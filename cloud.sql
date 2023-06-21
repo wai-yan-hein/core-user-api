@@ -149,3 +149,14 @@ add column mac_address varchar(255) null after pro_update;
 
 alter table machine_info
 add column serial_no varchar(255) not null after mac_id;
+
+create table token (
+  mac_id int(11) not null,
+  expired bit(1) not null,
+  revoked bit(1) not null,
+  token varchar(255) default null,
+  token_type varchar(255) default null,
+  primary key (mac_id),
+  unique key UK_pddrhgwxnms2aceeku9s2ewy5 (token),
+  key FKiblu4cjwvyntq3ugo31klp1c6 (mac_id)
+) engine=innodb default charset=utf8mb4 collate=utf8mb4_general_ci;
