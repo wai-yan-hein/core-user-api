@@ -22,7 +22,6 @@ public class AuthenticationService {
     private final JWTReactiveAuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getSerialNo(), request.getPassword()));
         var user = repository.findBySerialNo(request.getSerialNo()).orElse(null);
         if (user == null) {
             return AuthenticationResponse.builder().message("Your machine need register.").build();
@@ -30,6 +29,7 @@ public class AuthenticationService {
         if (!request.getPassword().equals(Util1.getPassword())) {
             return AuthenticationResponse.builder().message("Authentication Failed.").build();
         }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getSerialNo(), request.getPassword()));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
