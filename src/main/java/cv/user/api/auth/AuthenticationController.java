@@ -2,6 +2,7 @@ package cv.user.api.auth;
 
 import cv.user.api.common.Util1;
 import cv.user.api.entity.MachineInfo;
+import cv.user.api.repo.MachineInfoRepo;
 import cv.user.api.service.MachineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,17 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
     private final MachineService machineService;
+    private final MachineInfoRepo machineInfoRepo;
 
     @PostMapping("/authenticate")
     public Mono<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return Mono.justOrEmpty(service.authenticate(request));
     }
-
+    @GetMapping("/checkSerialNo")
+    public Mono<?> checkSerialNo(@RequestParam String serialNo) {
+        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
+        return info.isEmpty() ? Mono.just(new MachineInfo()) : Mono.just(info);
+    }
     @PostMapping("/registerMac")
     public Mono<?> registerMac(@RequestBody MachineInfo mac) {
         String serialNo = mac.getSerialNo();
