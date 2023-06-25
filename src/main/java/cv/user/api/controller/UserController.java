@@ -77,6 +77,8 @@ public class UserController {
     private ExchangeRateService exchangeRateService;
     @Autowired
     private VRoleMenuService vRoleMenuService;
+    @Autowired
+    private DepartmentService departmentService;
     private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
@@ -211,15 +213,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-role-property")
-    public ResponseEntity<List<RoleProperty>> getRoleProperty(@RequestParam String roleCode) {
-        List<RoleProperty> property = rolePropertyRepo.getRoleProperty(roleCode);
-        return ResponseEntity.ok(property);
+    public Flux<?> getRoleProperty(@RequestParam String roleCode) {
+        return Flux.fromIterable(rolePropertyRepo.getRoleProperty(roleCode));
     }
 
     @GetMapping(path = "/get-role-company")
-    public ResponseEntity<List<VRoleCompany>> getRoleCompany(@RequestParam String roleCode) {
-        List<VRoleCompany> property = vRoleCompanyService.getPrivilegeCompany(roleCode);
-        return ResponseEntity.ok(property);
+    public Flux<?> getRoleCompany(@RequestParam String roleCode) {
+        return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode));
     }
 
     @GetMapping(path = "/get-privilege-role-company")
@@ -228,21 +228,19 @@ public class UserController {
     }
 
     @PostMapping(path = "/save-role-property")
-    public ResponseEntity<RoleProperty> saveRoleProperty(@RequestBody RoleProperty rp) {
-        rp = rolePropertyRepo.save(rp);
-        return ResponseEntity.ok(rp);
+    public Mono<?> saveRoleProperty(@RequestBody RoleProperty rp) {
+        return Mono.justOrEmpty(rolePropertyRepo.save(rp));
     }
 
     @PostMapping(path = "/delete-role-property")
-    public ResponseEntity<ReturnObject> deleteRoleProperty(@RequestBody RoleProperty rp) {
+    public Mono<?> deleteRoleProperty(@RequestBody RoleProperty rp) {
         rolePropertyRepo.delete(rp);
-        return ResponseEntity.ok(ro);
+        return Mono.just(true);
     }
 
     @PostMapping("/save-currency")
-    public ResponseEntity<Currency> saveCurrency(@RequestBody Currency currency) {
-        currency = currencyRepo.save(currency);
-        return ResponseEntity.ok(currency);
+    public Mono<Currency> saveCurrency(@RequestBody Currency currency) {
+        return Mono.justOrEmpty(currencyRepo.save(currency));
     }
 
     @GetMapping("/get-currency")
@@ -253,27 +251,26 @@ public class UserController {
     @GetMapping("/find-currency")
     public Mono<?> findCurrency(@RequestParam String curCode) {
         Optional<Currency> cur = currencyRepo.findById(curCode);
-        return Mono.justOrEmpty(cur.orElse(null));
+        return Mono.justOrEmpty(cur);
     }
 
 
     @PostMapping("/save-company")
-    public ResponseEntity<CompanyInfo> saveCompany(@RequestBody CompanyInfo info) {
-        return ResponseEntity.ok(companyInfoService.save(info));
+    public Mono<?> saveCompany(@RequestBody CompanyInfo info) {
+        return Mono.justOrEmpty(companyInfoService.save(info));
     }
 
     @PostMapping("/save-system-property")
-    public ResponseEntity<SystemProperty> saveSystemProperty(@RequestBody SystemProperty property) {
-        property = systemPropertyRepo.save(property);
-        return ResponseEntity.ok(property);
+    public Mono<?> saveSystemProperty(@RequestBody SystemProperty property) {
+        return Mono.justOrEmpty(systemPropertyRepo.save(property));
     }
 
     @PostMapping("/save-mac-property")
-    public ResponseEntity<MachineProperty> saveMacProperty(@RequestBody MachineProperty property) {
+    public Mono<?> saveMacProperty(@RequestBody MachineProperty property) {
         if (!Objects.isNull(property.getKey().getMacId()) && !Objects.isNull(property.getKey().getPropKey())) {
             property = macPropertyRepo.save(property);
         }
-        return ResponseEntity.ok(property);
+        return Mono.justOrEmpty(property);
     }
 
     @GetMapping("/get-company")
@@ -287,14 +284,14 @@ public class UserController {
     }
 
     @PostMapping("/find-system-property")
-    public ResponseEntity<?> findSysProperty(@RequestBody PropertyKey key) {
+    public Mono<?> findSysProperty(@RequestBody PropertyKey key) {
         Optional<SystemProperty> p = systemPropertyRepo.findById(key);
-        return ResponseEntity.ok(p.orElse(null));
+        return Mono.justOrEmpty(p.orElse(null));
     }
 
     @GetMapping("/get-mac-property")
-    public ResponseEntity<List<MachineProperty>> getMacProperty(@RequestParam Integer macId) {
-        return ResponseEntity.ok(macPropertyRepo.getMacProperty(macId));
+    public Flux<?> getMacProperty(@RequestParam Integer macId) {
+        return Flux.fromIterable(macPropertyRepo.getMacProperty(macId));
     }
 
     @GetMapping(path = "/get-property")
@@ -383,19 +380,22 @@ public class UserController {
     }
 
     @GetMapping(path = "/get-department")
-    public ResponseEntity<?> getDepartment() {
-        return ResponseEntity.ok(departmentRepo.findAll());
+    public Flux<?> getDepartment(@RequestParam Boolean active) {
+        if (active) {
+            return Flux.fromIterable(departmentRepo.getDepartment(true));
+        }
+        return Flux.fromIterable(departmentRepo.getDepartment());
     }
 
     @GetMapping("/find-department")
-    public ResponseEntity<Department> findDepartment(@RequestParam Integer deptId) {
+    public Mono<?> findDepartment(@RequestParam Integer deptId) {
         Optional<Department> byId = departmentRepo.findById(deptId);
-        return ResponseEntity.ok(byId.orElse(null));
+        return Mono.justOrEmpty(byId.orElse(null));
     }
 
     @PostMapping("/save-department")
-    public ResponseEntity<?> saveDepartment(@RequestBody Department department) {
-        return ResponseEntity.ok(departmentRepo.save(department));
+    public Mono<?> saveDepartment(@RequestBody Department department) {
+        return Mono.justOrEmpty(departmentService.save(department));
     }
 
     @GetMapping(path = "/getBusinessType")

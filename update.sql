@@ -160,3 +160,14 @@ create table token (
   unique key UK_pddrhgwxnms2aceeku9s2ewy5 (token),
   key FKiblu4cjwvyntq3ugo31klp1c6 (mac_id)
 ) engine=innodb default charset=utf8mb4 collate=utf8mb4_general_ci;
+
+alter table department
+add column phone varchar(255) null after updated_date,
+add column address varchar(255) null after phone,
+add column email varchar(255) null after address,
+add column active bit(1) not null default 0 after email,
+add column deleted bit(1) not null default 0 after active;
+
+alter table appuser
+add column dept_id int null after updated_date;
+

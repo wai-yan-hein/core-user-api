@@ -32,6 +32,8 @@ public class AppUser  {
     private String roleCode;
     @Column(name = "doctor_id")
     private String doctorId;
+    @Column(name = "dept_id")
+    private Integer deptId;
     @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedDate;
 
