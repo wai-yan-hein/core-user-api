@@ -1,12 +1,13 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @Data
@@ -27,4 +28,14 @@ public class Department {
     private String accountQ;
     @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedDate;
+    @Column(name = "phone")
+    private String phoneNo;
+    @Column(name = "address")
+    private String address;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "active")
+    private boolean active;
+    @Column(name = "deleted")
+    private boolean deleted;
 }
