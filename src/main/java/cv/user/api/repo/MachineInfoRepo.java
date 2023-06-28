@@ -13,7 +13,7 @@ public interface MachineInfoRepo extends JpaRepository<MachineInfo, Integer> {
     @Query("select o from MachineInfo o where o.machineName = :name")
     List<MachineInfo> findByName(@Param("name") String macName);
     Optional<MachineInfo> findBySerialNo(String serialNo);
-    @Query(value = "select ifnull(max(mac_id),1)+1 mac_id from machine_info", nativeQuery = true)
+    @Query(value = "select ifnull(max(mac_id),0)+1 mac_id from machine_info", nativeQuery = true)
     Integer findMaxId();
     @Query("select o from MachineInfo o where o.updatedDate > :updatedDate")
     List<MachineInfo> getMachineInfoByDate(@Param("updatedDate") LocalDateTime updatedDate);
