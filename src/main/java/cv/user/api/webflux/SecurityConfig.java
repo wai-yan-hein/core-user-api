@@ -30,6 +30,7 @@ public class SecurityConfig {
         log.info("security configured.");
         return http.authorizeExchange((auth) -> auth
                         .pathMatchers("/auth/**",
+                                "/user/get-system-property",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
