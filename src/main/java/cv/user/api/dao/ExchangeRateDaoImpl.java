@@ -1,6 +1,5 @@
 package cv.user.api.dao;
 
-import cv.user.api.common.Util1;
 import cv.user.api.entity.ExchangeKey;
 import cv.user.api.entity.ExchangeRate;
 import org.springframework.stereotype.Repository;
@@ -29,7 +28,7 @@ public class ExchangeRateDaoImpl extends AbstractDao<ExchangeKey, ExchangeRate> 
             filter += "and o.targetCur = '" + targetCur + "'";
         }
         if (!compCode.equals("-")) {
-           filter += "and o.key.compCode = '" + compCode + "'";
+            filter += "and o.key.compCode = '" + compCode + "'";
         }
 
         return findHSQL(sql + filter);
