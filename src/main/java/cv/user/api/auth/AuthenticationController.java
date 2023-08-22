@@ -26,13 +26,14 @@ public class AuthenticationController {
     }
     @GetMapping("/checkSerialNo")
     public Mono<?> checkSerialNo(@RequestParam String serialNo) {
-        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
+        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(Util1.cleanStr(serialNo));
         return info.isEmpty() ? Mono.just(new MachineInfo()) : Mono.just(info);
     }
     @PostMapping("/registerMac")
     public Mono<?> registerMac(@RequestBody MachineInfo mac) {
         String serialNo = mac.getSerialNo();
         if (serialNo != null) {
+            serialNo = Util1.cleanStr(serialNo);
             Optional<MachineInfo> obj = machineService.findBySerialNo(serialNo);
             if (obj.isEmpty()) {
                 MachineInfo info = machineService.save(mac);

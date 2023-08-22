@@ -30,7 +30,8 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
     private RolePropertyRepo rolePropertyRepo;
     @Autowired
     private MenuService menuService;
-    @Autowired MenuTemplateService menuTemplateService;
+    @Autowired
+    MenuTemplateService menuTemplateService;
     @Autowired
     private PrivilegeMenuRepo privilegeMenuRepo;
 
@@ -41,22 +42,20 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
             info.setCompCode(compCode);
             info.setUserCode(Util1.isNull(info.getUserCode(), compCode));
             updateRole(compCode);
-
-            saveMenu(compCode,info.getBusId());
-
+            saveMenu(compCode, info.getBusId());
         }
         return infoRepo.save(info);
     }
-    private void saveMenu(String compCode,Integer busId){
-        if(busId!=null){
+
+    private void saveMenu(String compCode, Integer busId) {
+        if (busId != null) {
             //get menu template with bus id
             List<MenuTemplate> mTemList = menuTemplateService.findAll(busId);
             mTemList.forEach(m -> {
-                saveMenuAndPrivilege(m,compCode);
+                saveMenuAndPrivilege(m, compCode);
             });
         }
     }
-
 
 
     private void saveMenuAndPrivilege(MenuTemplate m, String compCode) {
@@ -69,11 +68,11 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
         menu.setMenuClass(m.getMenuClass());
         menu.setMenuName(m.getMenuName());
         menu.setMenuUrl(m.getMenuUrl());
-        menu.setParentMenuCode(m.getParentMenuId() == 0? "1" : m.getParentMenuId().toString());//
+        menu.setParentMenuCode(m.getParentMenuId() == 0 ? "1" : m.getParentMenuId().toString());//
         menu.setMenuType(m.getMenuType());
         menu.setAccount(m.getAccount());
         menu.setOrderBy(m.getOrderBy());
-        menu= menuService.save(menu);
+        menu = menuService.save(menu);
         savePrivileges(menu.getKey().getMenuCode(), compCode);
     }
 
@@ -143,7 +142,7 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
     private String getCompCode() {
         String option = "Company";
         int seqNo = seqService.getSeqNo(new SeqKey(option, "-"));
-        return String.format("%0" + 2 + "d", seqNo);
+        return String.format("%0" + 2 + "d", seqNo + 1);
     }
 
     private void updateRole(String compCode) {

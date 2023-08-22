@@ -171,3 +171,5 @@ add column deleted bit(1) not null default 0 after active;
 alter table appuser
 add column dept_id int null after updated_date;
 
+alter table appuser
+add column loc_code varchar(15) null after dept_id;

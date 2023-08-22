@@ -1,5 +1,6 @@
 package cv.user.api.controller;
 
+import cv.user.api.common.DepartmentNotFoundException;
 import cv.user.api.common.ReturnObject;
 import cv.user.api.common.Util1;
 import cv.user.api.common.YearEnd;
@@ -388,9 +389,11 @@ public class UserController {
     }
 
     @GetMapping("/find-department")
-    public Mono<?> findDepartment(@RequestParam Integer deptId) {
-        Optional<Department> byId = departmentRepo.findById(deptId);
-        return Mono.justOrEmpty(byId.orElse(null));
+    public Mono<Department> findDepartment(@RequestParam Integer deptId) {
+        Optional<Department> departmentOptional = departmentRepo.findById(deptId);
+        return departmentOptional
+                .map(Mono::just)
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
     }
 
     @PostMapping("/save-department")
@@ -402,7 +405,6 @@ public class UserController {
     public Flux<?> getBusinessType() {
         return Flux.fromIterable(businessTypeService.findAll());
     }
-
     @GetMapping(path = "/findBusinessType")
     public Mono<?> findBusinessType(@RequestParam Integer id) {
         return Mono.justOrEmpty(businessTypeService.findById(id));

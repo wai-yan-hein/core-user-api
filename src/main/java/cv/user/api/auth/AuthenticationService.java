@@ -34,7 +34,13 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken.getAccessToken());
-        return AuthenticationResponse.builder().accessToken(jwtToken.getAccessToken()).accessTokenExpired(jwtToken.getAccessTokenExpired()).refreshToken(refreshToken.getRefreshToken()).refreshTokenExpired(refreshToken.getRefreshTokenExpired()).build();
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken.getAccessToken())
+                .accessTokenExpired(jwtToken.getAccessTokenExpired())
+                .refreshToken(refreshToken.getRefreshToken())
+                .refreshTokenExpired(refreshToken.getRefreshTokenExpired())
+                .macId(user.getMacId())
+                .build();
     }
 
     private void saveUserToken(MachineInfo mac, String jwtToken) {

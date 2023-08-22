@@ -86,5 +86,10 @@ public class Util1 {
     public static String getPassword() {
         return Util1.toDateStr(Util1.getTodayDate(), "yyyyMMdd");
     }
-
+    public static String cleanStr(String str) {
+        if (str != null) {
+            return str.replaceAll(" ", "").toLowerCase();
+        }
+        return "";
+    }
 }
