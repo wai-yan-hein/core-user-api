@@ -1,5 +1,6 @@
 package cv.user.api.service;
 
+import cv.user.api.common.UserFilter;
 import cv.user.api.common.Util1;
 import cv.user.api.dao.ExchangeRateDao;
 import cv.user.api.entity.ExchangeKey;
@@ -35,6 +36,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public List<ExchangeRate> search(String fromDate, String toDate, String targetCur, String compCode) {
         return dao.search(fromDate, toDate, targetCur, compCode);
+    }
+
+    @Override
+    public ExchangeRate getAvgRate(UserFilter filter) {
+        return dao.getAvgRate(filter);
+    }
+
+    @Override
+    public ExchangeRate getRecentRate(UserFilter filter) {
+        return dao.getRecentRate(filter);
     }
 
     private String getExId() {

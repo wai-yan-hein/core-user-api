@@ -1,9 +1,6 @@
 package cv.user.api.controller;
 
-import cv.user.api.common.DepartmentNotFoundException;
-import cv.user.api.common.ReturnObject;
-import cv.user.api.common.Util1;
-import cv.user.api.common.YearEnd;
+import cv.user.api.common.*;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
 import cv.user.api.service.*;
@@ -405,6 +402,7 @@ public class UserController {
     public Flux<?> getBusinessType() {
         return Flux.fromIterable(businessTypeService.findAll());
     }
+
     @GetMapping(path = "/findBusinessType")
     public Mono<?> findBusinessType(@RequestParam Integer id) {
         return Mono.justOrEmpty(businessTypeService.findById(id));
@@ -447,12 +445,22 @@ public class UserController {
     }
 
     @GetMapping(path = "/searchExchange")
-    public Flux<?> searchExchange(@RequestParam String startDate, @RequestParam String endDate, @RequestParam String targetCur, @RequestParam String compCode) {
+    public Flux<?> searchExchange(@RequestParam String startDate,
+                                  @RequestParam String endDate,
+                                  @RequestParam String targetCur,
+                                  @RequestParam String compCode) {
         List<ExchangeRate> list = exchangeRateService.search(startDate, endDate, targetCur, compCode);
-        list.forEach((t) -> {
-            t.setExRate(t.getHomeFactor() / t.getTargetFactor());
-        });
-        return Flux.fromIterable(list);
+        list.forEach((t) -> t.setExRate(t.getHomeFactor() / t.getTargetFactor()));
+        return Flux.fromIterable(list).onErrorResume((t) -> Flux.empty());
+    }
+
+    @PostMapping(path = "/getExchangeAvg")
+    public Mono<?> getExchangeAvg(@RequestBody UserFilter filter) {
+        return Mono.justOrEmpty(exchangeRateService.getAvgRate(filter));
+    }
+    @PostMapping(path = "/getExchangeRecent")
+    public Mono<?> getExchangeRecent(@RequestBody UserFilter filter) {
+        return Mono.justOrEmpty(exchangeRateService.getRecentRate(filter));
     }
 
     @PostMapping(path = "/yearEnd")

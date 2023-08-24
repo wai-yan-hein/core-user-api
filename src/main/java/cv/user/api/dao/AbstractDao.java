@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
@@ -71,5 +73,23 @@ public abstract class AbstractDao<PK extends Serializable, T> {
             Statement stmt = con.createStatement();
             return stmt.executeQuery(sql);
         });
+    }
+    @Transactional
+    public ResultSet getResult(String sql, Object... params) {
+        return jdbcTemplate.execute((ConnectionCallback<ResultSet>) con -> {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            for (int i = 0; i < params.length; i++) {
+                stmt.setObject(i + 1, params[i]);
+            }
+            String formattedSql = formatSqlWithParams(sql, params);
+            //log.info("Executing SQL query: {}", formattedSql);
+            return stmt.executeQuery();
+        });
+    }
+    private String formatSqlWithParams(String sql, Object[] params) {
+        for (Object param : params) {
+            sql = sql.replaceFirst("\\?", param.toString());
+        }
+        return sql;
     }
 }
