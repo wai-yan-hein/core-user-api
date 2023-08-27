@@ -1,5 +1,6 @@
 package cv.user.api.controller;
 
+import cv.user.api.common.ReturnObject;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/download")
@@ -36,16 +39,21 @@ public class FileDownloadController {
     }
     @GetMapping("/getUpdatedProgramDate")
     public Mono<?> getUpdatedProgramDate(@RequestParam String program) {
-        String filePath ="download/";
+        String filePath = "download/";
         if (program.equals("core-account.jar")) {
-            String path = filePath+program;
-            File file = new File(path);
-            if (file.exists()) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String lastModified = dateFormat.format(new Date(file.lastModified()));
-                return Mono.just(lastModified);
+            String path = filePath + program;
+            Path file = Paths.get(path);
+            try {
+                if (Files.exists(file)) {
+                    long lastModifiedTimestamp = Files.getLastModifiedTime(file).toMillis();
+                    var ro = ReturnObject.builder().timestampUtc(lastModifiedTimestamp).build();
+                    return Mono.just(ro);
+                }
+            } catch (IOException e) {
+                // Handle IO exception if needed
             }
         }
         return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
+
 }

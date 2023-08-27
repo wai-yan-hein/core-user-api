@@ -6,6 +6,7 @@
 package cv.user.api.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -15,11 +16,13 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@Builder
 public class ReturnObject {
     private String status;
     private String message;
     private String errorMessage;
     private List<Object> list;
     private Object data;
+    private long timestampUtc;
     private byte[] file;
 }

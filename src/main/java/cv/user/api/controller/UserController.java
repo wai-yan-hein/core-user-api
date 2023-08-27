@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +40,6 @@ public class UserController {
     private MenuService menuService;
     @Autowired
     private MachineInfoRepo machineInfoRepo;
-    @Autowired
-    private MachineService machineService;
     @Autowired
     private PrivilegeCompanyRepo privilegeCompanyRepo;
     @Autowired
@@ -77,7 +74,6 @@ public class UserController {
     private VRoleMenuService vRoleMenuService;
     @Autowired
     private DepartmentService departmentService;
-    private final ReturnObject ro = new ReturnObject();
 
     @GetMapping("/hello")
     public Mono<?> hello() {
@@ -86,7 +82,8 @@ public class UserController {
 
 
     @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String userName, @RequestParam String password) {
+    public ResponseEntity<?> login(@RequestParam String userName,
+                                   @RequestParam String password) {
         List<AppUser> list = userRepo.login(userName, password);
         return ResponseEntity.ok(list.isEmpty() ? null : list.get(0));
     }
@@ -96,7 +93,6 @@ public class UserController {
         Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
         return info.isEmpty() ? Mono.empty() : Mono.just(info);
     }
-
     @GetMapping("/get-mac-list")
     public ResponseEntity<?> getMacList() {
         return ResponseEntity.ok(machineInfoRepo.findAll());
@@ -108,13 +104,11 @@ public class UserController {
         for (MachineInfo mac : macs) {
             if (!Objects.equals(mac.getMacId(), macId)) {
                 mac.setProUpdate(false);
-
             }
             machineInfoRepo.save(mac);
         }
         return "Success Release Program Update.";
     }
-
     @PostMapping("/save-user")
     public Mono<AppUser> saveUser(@RequestBody AppUser user) {
         return Mono.just(appUserService.save(user));
