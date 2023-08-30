@@ -5,6 +5,7 @@ import cv.user.api.entity.MachineInfo;
 import cv.user.api.repo.MachineInfoRepo;
 import cv.user.api.service.MachineService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final AuthenticationService service;
@@ -26,7 +28,9 @@ public class AuthenticationController {
     }
     @GetMapping("/checkSerialNo")
     public Mono<?> checkSerialNo(@RequestParam String serialNo) {
-        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(Util1.cleanStr(serialNo));
+        serialNo =Util1.cleanStr(serialNo);
+        log.info("/checkSerialNo : "+serialNo);
+        Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
         return info.isEmpty() ? Mono.just(new MachineInfo()) : Mono.just(info);
     }
     @PostMapping("/registerMac")
@@ -34,6 +38,8 @@ public class AuthenticationController {
         String serialNo = mac.getSerialNo();
         if (serialNo != null) {
             serialNo = Util1.cleanStr(serialNo);
+            mac.setSerialNo(serialNo);
+            log.info("/registerMac : "+serialNo);
             Optional<MachineInfo> obj = machineService.findBySerialNo(serialNo);
             if (obj.isEmpty()) {
                 MachineInfo info = machineService.save(mac);

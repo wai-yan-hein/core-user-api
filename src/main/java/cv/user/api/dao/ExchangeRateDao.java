@@ -13,4 +13,6 @@ public interface ExchangeRateDao {
     List<ExchangeRate> search(String fromDate, String toDate, String targetCur, String compCode);
     ExchangeRate getAvgRate(UserFilter filter);
     ExchangeRate getRecentRate(UserFilter filter);
+    List<ExchangeRate> getExchangeRate(String compCode);
+
 }

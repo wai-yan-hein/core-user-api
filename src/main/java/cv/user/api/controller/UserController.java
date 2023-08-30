@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +94,7 @@ public class UserController {
         Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
         return info.isEmpty() ? Mono.empty() : Mono.just(info);
     }
+
     @GetMapping("/get-mac-list")
     public ResponseEntity<?> getMacList() {
         return ResponseEntity.ok(machineInfoRepo.findAll());
@@ -109,6 +111,7 @@ public class UserController {
         }
         return "Success Release Program Update.";
     }
+
     @PostMapping("/save-user")
     public Mono<AppUser> saveUser(@RequestBody AppUser user) {
         return Mono.just(appUserService.save(user));
@@ -452,6 +455,7 @@ public class UserController {
     public Mono<?> getExchangeAvg(@RequestBody UserFilter filter) {
         return Mono.justOrEmpty(exchangeRateService.getAvgRate(filter));
     }
+
     @PostMapping(path = "/getExchangeRecent")
     public Mono<?> getExchangeRecent(@RequestBody UserFilter filter) {
         return Mono.justOrEmpty(exchangeRateService.getRecentRate(filter));
@@ -464,81 +468,86 @@ public class UserController {
 
     @GetMapping("/getUserByDate")
     public Flux<?> getUserByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(userRepo.getUserByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(userRepo.getUserByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getBusinessTypeByDate")
     public Flux<?> getBusinessTypeByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(businessTypeRepo.getBusinessTypeByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(businessTypeRepo.getBusinessTypeByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getCompanyInfoByDate")
     public Flux<?> getCompanyInfoByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(companyInfoRepo.getCompanyInfoByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(companyInfoRepo.getCompanyInfoByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getCurrencyByDate")
     public Flux<?> getCurrencyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(currencyRepo.getCurrencyByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(currencyRepo.getCurrencyByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getDepartmentByDate")
     public Flux<?> getDepartmentByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(departmentRepo.getDepartmentByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(departmentRepo.getDepartmentByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getExchangeRateByDate")
     public Flux<?> getExchangeRateByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(exchangeRateRepo.getExchangeRateByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(exchangeRateRepo.getExchangeRateByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getMacPropertyByDate")
     public Flux<?> getMacPropertyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(macPropertyRepo.getMacPropertyByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(macPropertyRepo.getMacPropertyByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getMachineInfoByDate")
     public Flux<?> getMachineInfoByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getMenuByDate")
     public Flux<?> getMenuByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(menuRepo.getMenuByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(menuRepo.getMenuByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getPCByDate")
     public Flux<?> getPCByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(privilegeCompanyRepo.getPCByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getPMByDate")
     public Flux<?> getPMByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(privilegeMenuRepo.getPMByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(privilegeMenuRepo.getPMByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getProjectByDate")
     public Flux<?> getProjectByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(projectRepo.getProjectByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(projectRepo.getProjectByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getRoleByDate")
     public Flux<?> getRoleByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(appRoleRepo.getRoleByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(appRoleRepo.getRoleByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getRolePropByDate")
     public Flux<?> getRolePropByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(rolePropertyRepo.getRolePropByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getSeqTableByDate")
     public Flux<?> getSeqTableByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(seqRepo.getSeqTableByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(seqRepo.getSeqTableByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getSystemPropertyByDate")
     public Flux<?> getSystemPropertyByDate(@RequestParam String updatedDate) {
-        return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Util1.toLocalDateTime(updatedDate)));
+        return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
+    }
+
+    @GetMapping("/getExchangeRate")
+    public Flux<?> getExchangeRate(@RequestParam String compCode) {
+        return Flux.fromIterable(exchangeRateService.getExchangeRate(compCode)).onErrorResume((e) -> Flux.empty());
     }
 }

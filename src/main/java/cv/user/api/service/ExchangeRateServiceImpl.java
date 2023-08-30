@@ -48,6 +48,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return dao.getRecentRate(filter);
     }
 
+    @Override
+    public List<ExchangeRate> getExchangeRate(String compCode) {
+        return dao.getExchangeRate(compCode);
+    }
+
     private String getExId() {
         String option = "Exchange";
         String period = Util1.toDateStr(Util1.getTodayDate(), "MMyy");

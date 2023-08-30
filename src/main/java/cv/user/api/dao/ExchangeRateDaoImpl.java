@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -99,5 +100,37 @@ public class ExchangeRateDaoImpl extends AbstractDao<ExchangeKey, ExchangeRate> 
             log.error("getRecentRate : " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public List<ExchangeRate> getExchangeRate(String compCode) {
+        List<ExchangeRate> list = new ArrayList<>();
+        String sql = """
+                select ex_code,comp_code,ex_date,home_cur,target_cur,home_factor,target_factor\s
+                from exchange_rate
+                where comp_code=?
+                and deleted =false
+                order by ex_date desc
+                limit 20;""";
+        try {
+            ResultSet rs = getResult(sql, compCode);
+            while (rs.next()) {
+                //ex_code,comp_code,ex_date,home_cur,target_cur,home_factor,target_factor
+                ExchangeRate r = new ExchangeRate();
+                ExchangeKey key = new ExchangeKey();
+                key.setCompCode(rs.getString("comp_code"));
+                key.setExCode(rs.getString("ex_code"));
+                r.setKey(key);
+                r.setExDate(rs.getTimestamp("ex_date").toLocalDateTime());
+                r.setHomeCur(rs.getString("home_cur"));
+                r.setTargetCur(rs.getString("target_cur"));
+                r.setHomeFactor(rs.getDouble("home_factor"));
+                r.setTargetFactor(rs.getDouble("target_factor"));
+                list.add(r);
+            }
+        } catch (Exception e) {
+            log.error("getExchangeRate : " + e.getMessage());
+        }
+        return list;
     }
 }

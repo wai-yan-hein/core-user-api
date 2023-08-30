@@ -22,14 +22,15 @@ public class AuthenticationService {
     private final JWTReactiveAuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var user = repository.findBySerialNo(request.getSerialNo()).orElse(null);
+        String serialNo =Util1.cleanStr(request.getSerialNo());
+        var user = repository.findBySerialNo(serialNo).orElse(null);
         if (user == null) {
             return AuthenticationResponse.builder().message("Your machine need register.").build();
         }
         if (!request.getPassword().equals(Util1.getPassword())) {
             return AuthenticationResponse.builder().message("Authentication Failed.").build();
         }
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getSerialNo(), request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(serialNo, request.getPassword()));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
