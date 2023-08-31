@@ -1,10 +1,7 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,9 +12,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "department")
 public class Department {
-    @Id
+    @EmbeddedId
     @Column(name = "dept_id")
-    private Integer deptId;
+    private DepartmentKey key;
     @Column(name = "user_code")
     private String userCode;
     @Column(name = "dept_name")

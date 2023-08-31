@@ -382,9 +382,9 @@ public class UserController {
         return Flux.fromIterable(departmentRepo.getDepartment());
     }
 
-    @GetMapping("/find-department")
-    public Mono<Department> findDepartment(@RequestParam Integer deptId) {
-        Optional<Department> departmentOptional = departmentRepo.findById(deptId);
+    @PostMapping("/findDepartment")
+    public Mono<Department> findDepartment(@RequestBody DepartmentKey key) {
+        Optional<Department> departmentOptional = departmentRepo.findById(key);
         return departmentOptional
                 .map(Mono::just)
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));

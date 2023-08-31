@@ -15,8 +15,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department save(Department dep) {
-        if (Util1.isNullOrEmpty(dep.getDeptId())) {
-            dep.setDeptId(repo.findMaxId());
+        if (Util1.isNullOrEmpty(dep.getKey().getDeptId())) {
+            dep.getKey().setDeptId(repo.findMaxId());
         }
         return repo.save(dep);
     }
