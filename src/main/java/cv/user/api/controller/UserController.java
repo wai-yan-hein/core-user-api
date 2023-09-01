@@ -83,10 +83,13 @@ public class UserController {
 
 
     @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String userName,
-                                   @RequestParam String password) {
+    public Mono<ResponseEntity<?>> login(@RequestParam String userName,
+                                         @RequestParam String password) {
         List<AppUser> list = userRepo.login(userName, password);
-        return ResponseEntity.ok(list.isEmpty() ? null : list.get(0));
+        if (list.isEmpty()) {
+            return Mono.just(ResponseEntity.notFound().build());
+        }
+        return Mono.just(ResponseEntity.ok(list.get(0)));
     }
 
     @GetMapping("/checkSerialNo")
@@ -95,34 +98,22 @@ public class UserController {
         return info.isEmpty() ? Mono.empty() : Mono.just(info);
     }
 
-    @GetMapping("/get-mac-list")
+    @GetMapping("/getMacList")
     public ResponseEntity<?> getMacList() {
         return ResponseEntity.ok(machineInfoRepo.findAll());
     }
 
-    @GetMapping("/update-program")
-    public String updateProgram(@RequestParam Integer macId) {
-        List<MachineInfo> macs = machineInfoRepo.findAll();
-        for (MachineInfo mac : macs) {
-            if (!Objects.equals(mac.getMacId(), macId)) {
-                mac.setProUpdate(false);
-            }
-            machineInfoRepo.save(mac);
-        }
-        return "Success Release Program Update.";
-    }
-
-    @PostMapping("/save-user")
+    @PostMapping("/saveUser")
     public Mono<AppUser> saveUser(@RequestBody AppUser user) {
         return Mono.just(appUserService.save(user));
     }
 
-    @PostMapping("/save-privilege-company")
+    @PostMapping("/savePrivilegeCompany")
     public ResponseEntity<PrivilegeCompany> savePC(@RequestBody PrivilegeCompany c) {
         return ResponseEntity.ok(privilegeCompanyRepo.save(c));
     }
 
-    @GetMapping("/get-privilege-company")
+    @GetMapping("/getPrivilegeCompany")
     public Flux<?> getPC(@RequestParam String roleCode) {
         List<PrivilegeCompany> list = privilegeCompanyRepo.getRoleCompany(roleCode);
         list.forEach(p -> {
@@ -132,62 +123,62 @@ public class UserController {
         return Flux.fromIterable(list);
     }
 
-    @GetMapping("/get-appuser")
+    @GetMapping("/getAppUser")
     public Flux<?> getAppUser() {
         return Flux.fromIterable(userRepo.findAll());
     }
 
-    @GetMapping("/find-appuser")
+    @GetMapping("/findAppUser")
     public ResponseEntity<AppUser> findAppUser(@RequestParam String userCode) {
         Optional<AppUser> byId = userRepo.findById(userCode);
         return ResponseEntity.ok(byId.orElse(null));
     }
 
-    @GetMapping("/get-role-menu-tree")
+    @GetMapping("/getRoleMenuTree")
     public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
         return ResponseEntity.ok(getMenu(roleCode, compCode));
     }
 
-    @GetMapping("/get-privilege-role-menu-tree")
-    public Flux<?> getPRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
+    @GetMapping("/getPrivilegeRoleMenuTree")
+    public Flux<?> getPrivilegeRoleMenuTree(@RequestParam String roleCode, @RequestParam String compCode) {
         List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         menus.removeIf(m -> !m.isAllow());
         return Flux.fromIterable(menus);
     }
 
-    @GetMapping("/get-menu-tree")
+    @GetMapping("/getMenuTree")
     public Flux<?> getMenuFlux(@RequestParam String compCode) {
         return Flux.fromIterable(getMenuTree(compCode));
     }
 
-    @GetMapping("/get-menu-parent")
+    @GetMapping("/getMenuParent")
     public ResponseEntity<List<Menu>> getMenuParent(@RequestParam String compCode) {
         List<Menu> menus = menuRepo.getMenuDynamic(compCode);
         return ResponseEntity.ok(menus);
     }
 
-    @PostMapping(path = "/save-menu")
+    @PostMapping(path = "/saveMenu")
     public Mono<?> saveMenu(@RequestBody Menu menu) {
         return Mono.justOrEmpty(menuService.save(menu));
     }
 
-    @PostMapping(path = "/delete-menu")
+    @PostMapping(path = "/deleteMenu")
     public Mono<?> deleteMenu(@RequestBody Menu menu) {
         menuRepo.delete(menu);
         return Mono.just(true);
     }
 
-    @GetMapping("/get-report")
-    public ResponseEntity<List<VRoleMenu>> getReport(@RequestParam String roleCode, @RequestParam String menuClass, @RequestParam String compCode) {
-        return ResponseEntity.ok(vRoleMenuService.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode));
+    @GetMapping("/getReport")
+    public Flux<?> getReport(@RequestParam String roleCode, @RequestParam String menuClass, @RequestParam String compCode) {
+        return Flux.fromIterable(vRoleMenuService.getReport(roleCode, Util1.isNull(menuClass, "-"), compCode)).onErrorResume(throwable -> Flux.empty());
     }
 
-    @GetMapping("/get-role")
-    public ResponseEntity<List<AppRole>> getRole() {
-        return ResponseEntity.ok(appRoleRepo.findAll());
+    @GetMapping("/getRole")
+    public Flux<?> getRole() {
+        return Flux.fromIterable(appRoleRepo.findAll()).onErrorResume(throwable -> Flux.empty());
     }
 
-    @PostMapping(path = "/save-role")
+    @PostMapping(path = "/saveRole")
     public Mono<?> saveRole(@RequestBody AppRole role) {
         return Mono.just(roleService.save(role));
     }
@@ -197,70 +188,69 @@ public class UserController {
         return Mono.justOrEmpty(companyInfoRepo.findById(compCode).orElse(null));
     }
 
-    @GetMapping(path = "/find-role")
+    @GetMapping(path = "/findRole")
     public Mono<?> findRole(@RequestParam String roleCode) {
         return Mono.justOrEmpty(roleService.findById(roleCode));
     }
 
-    @PostMapping(path = "/save-privilege-menu")
+    @PostMapping(path = "/savePrivilegeMenu")
     public Mono<?> savePM(@RequestBody PrivilegeMenu pm) {
         return Mono.justOrEmpty(privilegeMenuRepo.save(pm));
     }
 
-    @GetMapping(path = "/get-role-property")
+    @GetMapping(path = "/getRoleProperty")
     public Flux<?> getRoleProperty(@RequestParam String roleCode) {
         return Flux.fromIterable(rolePropertyRepo.getRoleProperty(roleCode));
     }
 
-    @GetMapping(path = "/get-role-company")
+    @GetMapping(path = "/getRoleCompany")
     public Flux<?> getRoleCompany(@RequestParam String roleCode) {
         return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode));
     }
 
-    @GetMapping(path = "/get-privilege-role-company")
+    @GetMapping(path = "/getPrivilegeRoleCompany")
     public Flux<?> getPRoleCompany(@RequestParam String roleCode) {
-        return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode));
+        return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode)).onErrorResume(throwable -> Flux.empty());
     }
 
-    @PostMapping(path = "/save-role-property")
+    @PostMapping(path = "/saveRoleProperty")
     public Mono<?> saveRoleProperty(@RequestBody RoleProperty rp) {
         return Mono.justOrEmpty(rolePropertyRepo.save(rp));
     }
 
-    @PostMapping(path = "/delete-role-property")
+    @PostMapping(path = "/deleteRoleProperty")
     public Mono<?> deleteRoleProperty(@RequestBody RoleProperty rp) {
         rolePropertyRepo.delete(rp);
         return Mono.just(true);
     }
 
-    @PostMapping("/save-currency")
+    @PostMapping("/saveCurrency")
     public Mono<Currency> saveCurrency(@RequestBody Currency currency) {
         return Mono.justOrEmpty(currencyRepo.save(currency));
     }
 
-    @GetMapping("/get-currency")
+    @GetMapping("/getCurrency")
     public Flux<?> getCurrency() {
-        return Flux.fromIterable(currencyRepo.findAll());
+        return Flux.fromIterable(currencyRepo.findAll()).onErrorResume(throwable -> Flux.empty());
     }
 
-    @GetMapping("/find-currency")
+    @GetMapping("/findCurrency")
     public Mono<?> findCurrency(@RequestParam String curCode) {
         Optional<Currency> cur = currencyRepo.findById(curCode);
         return Mono.justOrEmpty(cur);
     }
 
-
-    @PostMapping("/save-company")
+    @PostMapping("/saveCompany")
     public Mono<?> saveCompany(@RequestBody CompanyInfo info) {
         return Mono.justOrEmpty(companyInfoService.save(info));
     }
 
-    @PostMapping("/save-system-property")
+    @PostMapping("/saveSystemProperty")
     public Mono<?> saveSystemProperty(@RequestBody SystemProperty property) {
         return Mono.justOrEmpty(systemPropertyRepo.save(property));
     }
 
-    @PostMapping("/save-mac-property")
+    @PostMapping("/saveMacProperty")
     public Mono<?> saveMacProperty(@RequestBody MachineProperty property) {
         if (!Objects.isNull(property.getKey().getMacId()) && !Objects.isNull(property.getKey().getPropKey())) {
             property = macPropertyRepo.save(property);
@@ -268,28 +258,22 @@ public class UserController {
         return Mono.justOrEmpty(property);
     }
 
-    @GetMapping("/get-company")
+    @GetMapping("/getCompany")
     public Flux<?> getCompany(@RequestParam Boolean active) {
         return Flux.fromIterable(companyInfoRepo.findAll());
     }
 
-    @GetMapping("/get-system-property")
+    @GetMapping("/getSystemProperty")
     public Flux<?> getSystemProperty(@RequestParam String compCode) {
         return Flux.fromIterable(systemPropertyRepo.getSystemProperty(compCode));
     }
 
-    @PostMapping("/find-system-property")
-    public Mono<?> findSysProperty(@RequestBody PropertyKey key) {
-        Optional<SystemProperty> p = systemPropertyRepo.findById(key);
-        return Mono.justOrEmpty(p.orElse(null));
-    }
-
-    @GetMapping("/get-mac-property")
+    @GetMapping("/getMacProperty")
     public Flux<?> getMacProperty(@RequestParam Integer macId) {
         return Flux.fromIterable(macPropertyRepo.getMacProperty(macId));
     }
 
-    @GetMapping(path = "/get-property")
+    @GetMapping(path = "/getProperty")
     public Mono<?> getProperty(@RequestParam String compCode, @RequestParam String roleCode, @RequestParam Integer macId) {
         HashMap<String, String> hm = new HashMap<>();
         List<SystemProperty> systemProperty = systemPropertyRepo.getSystemProperty(compCode);
@@ -374,12 +358,13 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/get-department")
-    public Flux<?> getDepartment(@RequestParam Boolean active) {
+    @GetMapping(path = "/getDepartment")
+    public Flux<?> getDepartment(@RequestParam Boolean active,
+                                 @RequestParam String compCode) {
         if (active) {
-            return Flux.fromIterable(departmentRepo.getDepartment(true));
+            return Flux.fromIterable(departmentRepo.getDepartment(true, compCode));
         }
-        return Flux.fromIterable(departmentRepo.getDepartment());
+        return Flux.fromIterable(departmentRepo.getDepartment(compCode));
     }
 
     @PostMapping("/findDepartment")
@@ -390,7 +375,7 @@ public class UserController {
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
     }
 
-    @PostMapping("/save-department")
+    @PostMapping("/saveDepartment")
     public Mono<?> saveDepartment(@RequestBody Department department) {
         return Mono.justOrEmpty(departmentService.save(department));
     }

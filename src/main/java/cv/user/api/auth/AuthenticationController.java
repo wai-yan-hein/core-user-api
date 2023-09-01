@@ -26,20 +26,22 @@ public class AuthenticationController {
     public Mono<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return Mono.justOrEmpty(service.authenticate(request));
     }
+
     @GetMapping("/checkSerialNo")
     public Mono<?> checkSerialNo(@RequestParam String serialNo) {
-        serialNo =Util1.cleanStr(serialNo);
-        log.info("/checkSerialNo : "+serialNo);
+        serialNo = Util1.cleanStr(serialNo);
+        log.info("/checkSerialNo : " + serialNo);
         Optional<MachineInfo> info = machineInfoRepo.findBySerialNo(serialNo);
         return info.isEmpty() ? Mono.just(new MachineInfo()) : Mono.just(info);
     }
+
     @PostMapping("/registerMac")
     public Mono<?> registerMac(@RequestBody MachineInfo mac) {
         String serialNo = mac.getSerialNo();
         if (serialNo != null) {
             serialNo = Util1.cleanStr(serialNo);
             mac.setSerialNo(serialNo);
-            log.info("/registerMac : "+serialNo);
+            log.info("/registerMac : " + serialNo);
             Optional<MachineInfo> obj = machineService.findBySerialNo(serialNo);
             if (obj.isEmpty()) {
                 MachineInfo info = machineService.save(mac);
@@ -47,7 +49,7 @@ public class AuthenticationController {
                 AuthenticationResponse authenticate = service.authenticate(request);
                 authenticate.setMacId(info.getMacId());
                 return Mono.justOrEmpty(authenticate);
-            }else{
+            } else {
                 Mono.just(ResponseEntity.badRequest().build());
             }
         }

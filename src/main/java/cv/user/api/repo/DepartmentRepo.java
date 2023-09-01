@@ -16,9 +16,9 @@ public interface DepartmentRepo extends JpaRepository<Department, DepartmentKey>
     @Query(value = "select ifnull(max(dept_id),1)+1 dept_id from department", nativeQuery = true)
     Integer findMaxId();
 
-    @Query(value = "select * from department where deleted =false and active =:active", nativeQuery = true)
-    List<Department> getDepartment(@Param("active") Boolean active);
-    @Query(value = "select * from department where deleted =false", nativeQuery = true)
-    List<Department> getDepartment();
+    @Query(value = "select * from department where deleted =false and active =:active and comp_code = :comp_code", nativeQuery = true)
+    List<Department> getDepartment(@Param("active") Boolean active,@Param("comp_code") String compCode);
+    @Query(value = "select * from department where deleted =false and comp_code = :comp_code", nativeQuery = true)
+    List<Department> getDepartment(@Param("comp_code") String compCode);
 
 }

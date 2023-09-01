@@ -174,11 +174,13 @@ add column dept_id int null after updated_date;
 alter table appuser
 add column loc_code varchar(15) null after dept_id;
 
-#for hps
-insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)
-select ex_code, comp_code, ex_date, 1, home_cur, ex_rate, exchange_cur, created_date, created_by, updated_date, updated_by, deleted from cv_acc_hps.cur_exchange;
-
 alter table department
 add column comp_code varchar(15) not null after deleted,
 drop primary key,
 add primary key (dept_id, comp_code);
+
+
+#for hps
+insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)
+select ex_code, comp_code, ex_date, 1, home_cur, ex_rate, exchange_cur, created_date, created_by, updated_date, updated_by, deleted from cv_acc_hps.cur_exchange;
+

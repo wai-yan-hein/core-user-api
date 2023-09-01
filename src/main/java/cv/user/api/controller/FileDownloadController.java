@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,20 +24,24 @@ import java.nio.file.Paths;
 @RequestMapping("/download")
 public class FileDownloadController {
     @GetMapping("/program")
-    public Mono<ResponseEntity<Resource>> downloadProgram(@RequestParam String program) {
-        String filePath = "download/"+program; // Path to the jar file on the server
+    public Mono<ResponseEntity<?>> downloadProgram(@RequestParam String program) {
+        String filePath = "download/" + program; // Path to the jar file on the server
         File file = new File(filePath);
-        if (!file.exists()) {
-            return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "core-account.jar");
+        return Mono.defer(() -> {
+            if (!file.exists()) {
+                return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            }
 
-        Resource resource = new FileSystemResource(file);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "core-account.jar");
 
-        return Mono.just(new ResponseEntity<>(resource, headers, HttpStatus.OK));
+            Resource resource = new FileSystemResource(file);
+
+            return Mono.just(new ResponseEntity<>(resource, headers, HttpStatus.OK));
+        }).subscribeOn(Schedulers.boundedElastic());
     }
+
     @GetMapping("/getUpdatedProgramDate")
     public Mono<?> getUpdatedProgramDate(@RequestParam String program) {
         String filePath = "download/";
