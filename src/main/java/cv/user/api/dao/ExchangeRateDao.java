@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ExchangeRateDao {
     ExchangeRate save(ExchangeRate ex);
+    ExchangeRate findById (ExchangeKey key);
+
     boolean delete(ExchangeKey key);
 
     List<ExchangeRate> search(String fromDate, String toDate, String targetCur, String compCode);

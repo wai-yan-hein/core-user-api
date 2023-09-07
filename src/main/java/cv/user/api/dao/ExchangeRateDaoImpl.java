@@ -20,6 +20,11 @@ public class ExchangeRateDaoImpl extends AbstractDao<ExchangeKey, ExchangeRate> 
     }
 
     @Override
+    public ExchangeRate findById(ExchangeKey key) {
+        return getByKey(key);
+    }
+
+    @Override
     public boolean delete(ExchangeKey key) {
         remove(key);
         return true;

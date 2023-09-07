@@ -535,4 +535,8 @@ public class UserController {
     public Flux<?> getExchangeRate(@RequestParam String compCode) {
         return Flux.fromIterable(exchangeRateService.getExchangeRate(compCode)).onErrorResume((e) -> Flux.empty());
     }
+    @PostMapping("/findExchange")
+    public Mono<?> findExchange(@RequestBody ExchangeKey key) {
+        return Mono.justOrEmpty(exchangeRateService.findById(key));
+    }
 }

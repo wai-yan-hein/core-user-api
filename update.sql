@@ -179,6 +179,8 @@ add column comp_code varchar(15) not null after deleted,
 drop primary key,
 add primary key (dept_id, comp_code);
 
+update department
+set comp_code ='0010010';
 
 #for hps
 insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)

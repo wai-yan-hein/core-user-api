@@ -29,6 +29,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public ExchangeRate findById(ExchangeKey key) {
+        return dao.findById(key);
+    }
+
+    @Override
     public boolean delete(ExchangeKey key) {
         return dao.delete(key);
     }
