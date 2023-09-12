@@ -299,7 +299,7 @@ public class UserController {
     }
 
     private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(roleCode, "1", compCode);
+        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(roleCode, "#", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getRoleMenuChild(role);
@@ -309,7 +309,7 @@ public class UserController {
     }
 
     private List<VRoleMenu> getMenu(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode);
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getMenuChild(role);
@@ -339,7 +339,7 @@ public class UserController {
     }
 
     private List<Menu> getMenuTree(String compCode) {
-        List<Menu> menus = menuRepo.getMenuChild("1", compCode);
+        List<Menu> menus = menuRepo.getMenuChild("#", compCode);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
                 getMenuChild(m);
