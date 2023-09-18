@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface MenuTemplateRepo extends JpaRepository<MenuTemplate, MenuTemplateKey> {
     @Query(value = "select ifnull(max(menu_id),0)+1 menu_id from menu_template", nativeQuery = true)
-    Integer findMaxId();
+    String findMaxId();
 
     @Query("select o from MenuTemplate o where o.parentMenuId = :parent and o.key.busId = :busId order by o.orderBy")
-    List<MenuTemplate> getMenuChild(@Param("parent") Integer parentCode, @Param("busId") Integer busId);
+    List<MenuTemplate> getMenuChild(@Param("parent") String parentCode, @Param("busId") Integer busId);
 
     @Query("select o from MenuTemplate o where o.key.busId = :busId")
     List<MenuTemplate> findAll(@Param("busId") Integer busId);

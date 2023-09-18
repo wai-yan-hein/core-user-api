@@ -37,7 +37,7 @@ public class MenuTemplateServiceImpl implements MenuTemplateService {
     }
 
     private List<MenuTemplate> getMenuTree(Integer busId) {
-        List<MenuTemplate> menus = repo.getMenuChild(0, busId);
+        List<MenuTemplate> menus = repo.getMenuChild("#", busId);
         if (!menus.isEmpty()) {
             for (MenuTemplate m : menus) {
                 getMenuChild(m);

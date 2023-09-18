@@ -68,7 +68,7 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
         menu.setMenuClass(m.getMenuClass());
         menu.setMenuName(m.getMenuName());
         menu.setMenuUrl(m.getMenuUrl());
-        menu.setParentMenuCode(m.getParentMenuId() == 0 ? "1" : m.getParentMenuId().toString());//
+        menu.setParentMenuCode(m.getParentMenuId() == "0" ? "#" : m.getParentMenuId().toString());//
         menu.setMenuType(m.getMenuType());
         menu.setAccount(m.getAccount());
         menu.setOrderBy(m.getOrderBy());
