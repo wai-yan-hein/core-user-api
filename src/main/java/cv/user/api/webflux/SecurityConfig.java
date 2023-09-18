@@ -13,8 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -28,8 +32,9 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         log.info("security configured.");
-        return http.authorizeExchange((auth) -> auth
-                        .pathMatchers("/auth/**",
+        return http
+                .cors(corsSpec -> corsConfigurationSource())
+                .authorizeExchange((auth) -> auth.pathMatchers("/auth/**",
                                 "/user/getSystemProperty",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -40,15 +45,29 @@ public class SecurityConfig {
                                 "/configuration/security",
                                 "/swagger-ui/**",
                                 "/webjars/**",
-                                "/swagger-ui.html"
-                        )
+                                "/swagger-ui.html")
                         .permitAll()
                         .anyExchange().authenticated())
                 .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
+                .securityContextRepository(securityContextRepository()) // Set custom security context repository
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true); // allow cookies
+        //this is fucking shit pattern
+        config.addAllowedOriginPattern("*"); // allow any origin that matches the pattern "*"
+        config.addAllowedHeader("*"); // allow any header
+        config.addAllowedMethod("*"); // allow any method
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // apply CORS configuration to all paths
+        return source;
     }
 
     @Bean

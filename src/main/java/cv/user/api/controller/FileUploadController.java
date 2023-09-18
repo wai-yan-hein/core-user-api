@@ -1,64 +1,40 @@
 package cv.user.api.controller;
 
-import cv.user.api.common.ReturnObject;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/upload")
 public class FileUploadController {
-    @GetMapping("/program")
-    public Mono<ResponseEntity<?>> downloadProgram(@RequestParam String program) {
-        String filePath = "download/" + program; // Path to the jar file on the server
-        File file = new File(filePath);
-        return Mono.defer(() -> {
-            if (!file.exists()) {
-                return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "core-account.jar");
-
-            Resource resource = new FileSystemResource(file);
-
-            return Mono.just(new ResponseEntity<>(resource, headers, HttpStatus.OK));
-        }).subscribeOn(Schedulers.boundedElastic());
+    private static final String DOWNLOAD_DIR = "./download/";
+    @PostMapping("/program")
+    public Mono<String> uploadFile(@RequestPart("file") Mono<FilePart> filePartMono) {
+        return filePartMono
+                .flatMap(this::saveFile)
+                .switchIfEmpty(Mono.error(new FileUploadException("File upload failed.")))
+                .map(filename -> "File uploaded successfully: " + filename);
     }
 
-    @GetMapping("/getUpdatedProgramDate")
-    public Mono<?> getUpdatedProgramDate(@RequestParam String program) {
-        String filePath = "download/";
-        if (program.equals("core-account.jar")) {
-            String path = filePath + program;
-            Path file = Paths.get(path);
-            try {
-                if (Files.exists(file)) {
-                    long lastModifiedTimestamp = Files.getLastModifiedTime(file).toMillis();
-                    var ro = ReturnObject.builder().timestampUtc(lastModifiedTimestamp).build();
-                    return Mono.just(ro);
-                }
-            } catch (IOException e) {
-                // Handle IO exception if needed
-            }
+    private Mono<String> saveFile(FilePart filePart) {
+        String fileName = filePart.filename();
+        if (fileName.equals("core-account.jar") || fileName.equals("core-account.apk")) {
+            Path path = Paths.get(DOWNLOAD_DIR + filePart.filename());
+            return filePart.transferTo(path).then(Mono.just(filePart.filename()));
+        } else {
+            return Mono.error(new FileUploadException("Invalid file name: " + fileName));
         }
-        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "File upload failed")
+    public static class FileUploadException extends RuntimeException {
+        public FileUploadException(String message) {
+            super(message);
+        }
     }
 
 }

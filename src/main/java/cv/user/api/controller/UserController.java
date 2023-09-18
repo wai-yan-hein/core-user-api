@@ -99,8 +99,14 @@ public class UserController {
     }
 
     @GetMapping("/getMacList")
-    public ResponseEntity<?> getMacList() {
-        return ResponseEntity.ok(machineInfoRepo.findAll());
+    public Flux<?> getMacList() {
+        return Flux.fromIterable(machineInfoRepo.findAll()).onErrorResume((throwable -> Flux.empty()));
+    }
+
+    @PostMapping("/saveMachine")
+    public Mono<?> saveMachine(@RequestBody MachineInfo machineInfo) {
+        machineInfo.setSerialNo(Util1.cleanStr(machineInfo.getSerialNo()));
+        return Mono.just(machineInfoRepo.save(machineInfo));
     }
 
     @PostMapping("/saveUser")
@@ -109,8 +115,8 @@ public class UserController {
     }
 
     @PostMapping("/savePrivilegeCompany")
-    public ResponseEntity<PrivilegeCompany> savePC(@RequestBody PrivilegeCompany c) {
-        return ResponseEntity.ok(privilegeCompanyRepo.save(c));
+    public Mono<?> savePrivilegeCompany(@RequestBody PrivilegeCompany c) {
+        return Mono.just(privilegeCompanyRepo.save(c));
     }
 
     @GetMapping("/getPrivilegeCompany")
@@ -129,20 +135,19 @@ public class UserController {
     }
 
     @GetMapping("/findAppUser")
-    public ResponseEntity<AppUser> findAppUser(@RequestParam String userCode) {
+    public Mono<?> findAppUser(@RequestParam String userCode) {
         Optional<AppUser> byId = userRepo.findById(userCode);
-        return ResponseEntity.ok(byId.orElse(null));
+        return byId.isPresent() ? Mono.just(byId.get()) : Mono.empty();
     }
 
     @GetMapping("/getRoleMenuTree")
-    public ResponseEntity<List<VRoleMenu>> getRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
-        return ResponseEntity.ok(getMenu(roleCode, compCode));
+    public Flux<?> getRoleMenu(@RequestParam String roleCode, @RequestParam String compCode) {
+        return Flux.fromIterable(getMenu(roleCode, compCode)).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/getPrivilegeRoleMenuTree")
     public Flux<?> getPrivilegeRoleMenuTree(@RequestParam String roleCode, @RequestParam String compCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
-        menus.removeIf(m -> !m.isAllow());
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode, true);
         return Flux.fromIterable(menus);
     }
 
@@ -152,9 +157,9 @@ public class UserController {
     }
 
     @GetMapping("/getMenuParent")
-    public ResponseEntity<List<Menu>> getMenuParent(@RequestParam String compCode) {
+    public Flux<?> getMenuParent(@RequestParam String compCode) {
         List<Menu> menus = menuRepo.getMenuDynamic(compCode);
-        return ResponseEntity.ok(menus);
+        return Flux.fromIterable(menus).onErrorResume(throwable -> Flux.empty());
     }
 
     @PostMapping(path = "/saveMenu")
@@ -282,58 +287,63 @@ public class UserController {
                 hm.put(p.getKey().getPropKey(), p.getPropValue());
             }
         }
-
         List<RoleProperty> roleProperty = rolePropertyRepo.getRoleProperty(roleCode);
         if (!roleProperty.isEmpty()) {
             for (RoleProperty rp : roleProperty) {
-                hm.put(rp.getKey().getPropKey(), rp.getPropValue());
+                String value = rp.getPropValue();
+                if (!Util1.isNullOrEmpty(value) || !value.equals("-")) {
+                    hm.put(rp.getKey().getPropKey(), value);
+                }
             }
         }
         List<MachineProperty> machineProperties = macPropertyRepo.getMacProperty(macId);
         if (!machineProperties.isEmpty()) {
             for (MachineProperty p : machineProperties) {
-                hm.put(p.getKey().getPropKey(), p.getPropValue());
+                String value = p.getPropValue();
+                if (!Util1.isNullOrEmpty(value) || !value.equals("-")) {
+                    hm.put(p.getKey().getPropKey(), value);
+                }
             }
         }
         return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(roleCode, "1", compCode);
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode, boolean privilege) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode, privilege);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getRoleMenuChild(role);
+                getRoleMenuChild(role, privilege);
             }
         }
         return roles;
     }
 
     private List<VRoleMenu> getMenu(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode);
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode, false);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getMenuChild(role);
+                getMenuChild(role, false);
             }
         }
         return roles;
     }
 
-    private void getMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
+    private void getMenuChild(VRoleMenu parent, boolean privilege) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode(), privilege);
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getMenuChild(role);
+                getMenuChild(role, privilege);
             }
         }
     }
 
-    private void getRoleMenuChild(VRoleMenu parent) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenuChild(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode());
+    private void getRoleMenuChild(VRoleMenu parent, boolean privilege) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(parent.getRoleCode(), parent.getMenuCode(), parent.getCompCode(), privilege);
         parent.setChild(roles);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getRoleMenuChild(role);
+                getRoleMenuChild(role, privilege);
             }
         }
     }
@@ -369,10 +379,9 @@ public class UserController {
 
     @PostMapping("/findDepartment")
     public Mono<Department> findDepartment(@RequestBody DepartmentKey key) {
-        Optional<Department> departmentOptional = departmentRepo.findById(key);
-        return departmentOptional
+        return departmentRepo.findById(key)
                 .map(Mono::just)
-                .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
+                .orElseGet(Mono::empty);
     }
 
     @PostMapping("/saveDepartment")
@@ -535,6 +544,7 @@ public class UserController {
     public Flux<?> getExchangeRate(@RequestParam String compCode) {
         return Flux.fromIterable(exchangeRateService.getExchangeRate(compCode)).onErrorResume((e) -> Flux.empty());
     }
+
     @PostMapping("/findExchange")
     public Mono<?> findExchange(@RequestBody ExchangeKey key) {
         return Mono.justOrEmpty(exchangeRateService.findById(key));

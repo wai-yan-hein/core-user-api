@@ -179,8 +179,14 @@ add column comp_code varchar(15) not null after deleted,
 drop primary key,
 add primary key (dept_id, comp_code);
 
+set sql_safe_updates =0;
 update department
 set comp_code ='0010010';
+
+alter table machine_info
+add column os_name varchar(255) null after mac_address,
+add column os_version varchar(255) null after os_name,
+add column os_arch varchar(255) null after os_version;
 
 #for hps
 insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)

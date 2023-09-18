@@ -41,7 +41,12 @@ public class MachineInfo implements UserDetails {
     private String macAddress;
     @Column(name = "serial_no")
     private String serialNo;
-
+    @Column(name = "os_name")
+    private String osName;
+    @Column(name = "os_version")
+    private String osVersion;
+    @Column(name = "os_arch")
+    private String osArch;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
