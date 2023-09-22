@@ -147,7 +147,7 @@ public class UserController {
 
     @GetMapping("/getPrivilegeRoleMenuTree")
     public Flux<?> getPrivilegeRoleMenuTree(@RequestParam String roleCode, @RequestParam String compCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode, true);
         return Flux.fromIterable(menus);
     }
 
@@ -308,11 +308,11 @@ public class UserController {
         return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, true);
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode, boolean privilege) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, privilege);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getRoleMenuChild(role, true);
+                getRoleMenuChild(role, privilege);
             }
         }
         return roles;
