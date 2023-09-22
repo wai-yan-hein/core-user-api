@@ -1,4 +1,4 @@
-package cv.api.common;
+package cv.user.api.common;
 
 
 import com.google.gson.*;

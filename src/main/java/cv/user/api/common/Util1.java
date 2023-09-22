@@ -4,12 +4,15 @@
  */
 package cv.user.api.common;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +22,10 @@ import java.util.Date;
  */
 @Slf4j
 public class Util1 {
+    public static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter())
+            .create();
     public static String isNull(String strValue, String value) {
         if (strValue == null) {
             return value;
@@ -91,5 +98,9 @@ public class Util1 {
             return str.replaceAll(" ", "").toLowerCase();
         }
         return "";
+    }
+    public static boolean getBoolean(Object obj) {
+        return obj != null && (obj.toString().equals("1") || obj.toString().equalsIgnoreCase("true"));
+
     }
 }

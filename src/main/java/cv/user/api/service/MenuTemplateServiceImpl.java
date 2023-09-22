@@ -27,17 +27,24 @@ public class MenuTemplateServiceImpl implements MenuTemplateService {
     }
 
     @Override
-    public List<MenuTemplate> getMenu(Integer busId) {
-        return getMenuTree(busId);
+    public boolean delete(MenuTemplateKey key) {
+        repo.deleteById(key);
+        return true;
     }
 
     @Override
-    public List<MenuTemplate> findAll(Integer busId) {
+    public List<MenuTemplate> getMenuTree(Integer busId) {
+        return getMenuList(busId);
+    }
+
+    @Override
+    public List<MenuTemplate> getMenu(Integer busId) {
         return repo.findAll(busId);
     }
 
-    private List<MenuTemplate> getMenuTree(Integer busId) {
-        List<MenuTemplate> menus = repo.getMenuChild("#", busId);
+
+    private List<MenuTemplate> getMenuList(Integer busId) {
+        List<MenuTemplate> menus = repo.getMenuChild(0, busId);
         if (!menus.isEmpty()) {
             for (MenuTemplate m : menus) {
                 getMenuChild(m);

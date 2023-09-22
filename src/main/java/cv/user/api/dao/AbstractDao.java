@@ -52,11 +52,6 @@ public abstract class AbstractDao<PK extends Serializable, T> {
         return entityManager.createQuery(hsql, persistentClass).getResultList();
     }
 
-    public void execSql(String... sql) {
-        for (String s : sql) {
-            jdbcTemplate.execute(s);
-        }
-    }
 
     public void remove(PK pk) {
         T byKey = getByKey(pk);
@@ -73,6 +68,11 @@ public abstract class AbstractDao<PK extends Serializable, T> {
             Statement stmt = con.createStatement();
             return stmt.executeQuery(sql);
         });
+    }
+    public void execSql(String... sql) {
+        for (String s : sql) {
+            jdbcTemplate.execute(s);
+        }
     }
     @Transactional
     public ResultSet getResult(String sql, Object... params) {

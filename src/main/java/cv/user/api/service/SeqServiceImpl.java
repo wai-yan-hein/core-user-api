@@ -20,10 +20,6 @@ public class SeqServiceImpl implements SeqService {
         return seqRepo.save(s);
     }
 
-    @Override
-    public SeqTable findByKey(SeqKey key) {
-        return seqRepo.findById(key).orElse(null);
-    }
 
     @Override
     public int getSeqNo(SeqKey key) {
@@ -38,4 +34,5 @@ public class SeqServiceImpl implements SeqService {
         seqRepo.save(seqTable);
         return seqTable.getSeqNo();
     }
+
 }

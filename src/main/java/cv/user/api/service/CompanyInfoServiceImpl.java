@@ -1,16 +1,26 @@
 package cv.user.api.service;
 
+import com.google.gson.reflect.TypeToken;
 import cv.user.api.common.Util1;
 import cv.user.api.common.YearEnd;
+import cv.user.api.dao.NativeSqlDao;
 import cv.user.api.entity.*;
+import cv.user.api.model.AccSetting;
+import cv.user.api.model.ChartOfAccount;
+import cv.user.api.model.DepartmentA;
+import cv.user.api.model.Location;
 import cv.user.api.repo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @Transactional
@@ -31,49 +41,83 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
     @Autowired
     private MenuService menuService;
     @Autowired
-    MenuTemplateService menuTemplateService;
-    @Autowired
     private PrivilegeMenuRepo privilegeMenuRepo;
+    @Autowired
+    private NativeSqlDao nativeSqlDao;
+    @Autowired
+    private BusinessTypeService businessTypeService;
+    @Autowired
+    private DepartmentService departmentService;
+    private WebRepo webRepo;
 
     @Override
     public CompanyInfo save(CompanyInfo info) {
-        if (Util1.isNullOrEmpty(info.getCompCode())) {
-            String compCode = getCompCode();
-            info.setCompCode(compCode);
+        String compCode = info.getCompCode();
+        if (Util1.isNullOrEmpty(compCode)) {
+            info.setCompCode(getCompCode());
             info.setUserCode(Util1.isNull(info.getUserCode(), compCode));
-            updateRole(compCode);
-            saveMenu(compCode, info.getBusId());
+            BusinessType type = businessTypeService.findById(info.getBusId());
+            if (type != null) {
+                webRepo = new WebRepo(info.getToken());
+                processTemplate(info.getCompCode(), type.getBusName(),info.getCreatedBy());
+            }
         }
         return infoRepo.save(info);
     }
 
-    private void saveMenu(String compCode, Integer busId) {
-        if (busId != null) {
-            //get menu template with bus id
-            List<MenuTemplate> mTemList = menuTemplateService.findAll(busId);
-            mTemList.forEach(m -> {
-                saveMenuAndPrivilege(m, compCode);
-            });
-        }
+    public List<File> getTemplateFiles(String busName) {
+        String path = "template/" + busName.toLowerCase();
+        File file = new File(path);
+        return Arrays.asList(Objects.requireNonNull(file.listFiles()));
     }
 
+    private void processTemplate(String compCode, String busName,String createdBy) {
+        List<File> files = getTemplateFiles(busName);
+        files.forEach((t) -> {
+            String fileName = t.getName();
+            String name = fileName.substring(0, fileName.lastIndexOf('.'));
+            switch (name) {
+                case "menu" -> saveMenu(t, compCode);
+                case "department" -> saveDepartment(t, compCode);
+                case "system_property" -> saveSysProperty(t, compCode);
+                case "acc_setting" -> saveAccSetting(t, compCode);
+                case "location" -> saveLocation(t, compCode);
+                case "acc_department" -> saveDepartmentA(t, compCode);
+                case "coa" -> saveCOA(t, compCode,createdBy);
+            }
+        });
+    }
 
-    private void saveMenuAndPrivilege(MenuTemplate m, String compCode) {
-        Menu menu = new Menu();
-        MenuKey mKey = new MenuKey();
-        mKey.setMenuCode(m.getKey().getMenuId().toString());
-        mKey.setCompCode(compCode);
-        menu.setKey(mKey);
-        menu.setUserCode(null); //
-        menu.setMenuClass(m.getMenuClass());
-        menu.setMenuName(m.getMenuName());
-        menu.setMenuUrl(m.getMenuUrl());
-        menu.setParentMenuCode(m.getParentMenuId() == "0" ? "#" : m.getParentMenuId().toString());//
-        menu.setMenuType(m.getMenuType());
-        menu.setAccount(m.getAccount());
-        menu.setOrderBy(m.getOrderBy());
-        menu = menuService.save(menu);
-        savePrivileges(menu.getKey().getMenuCode(), compCode);
+    private void saveMenu(File file, String compCode) {
+        try {
+            log.info("menu starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<MenuTemplate>>() {
+                }.getType();
+                List<MenuTemplate> list = Util1.gson.fromJson(reader, type);
+                list.forEach((m) -> {
+                    Menu menu = new Menu();
+                    MenuKey mKey = new MenuKey();
+                    mKey.setMenuCode(m.getKey().getMenuId().toString());
+                    mKey.setCompCode(compCode);
+                    menu.setKey(mKey);
+                    menu.setUserCode(null); //
+                    menu.setMenuClass(m.getMenuClass());
+                    menu.setMenuName(m.getMenuName());
+                    menu.setMenuUrl(m.getMenuUrl());
+                    menu.setParentMenuCode(m.getParentMenuId() == 0 ? "#" : m.getParentMenuId().toString());//
+                    menu.setMenuType(m.getMenuType());
+                    menu.setAccount(m.getAccount());
+                    menu.setOrderBy(m.getOrderBy());
+                    menu = menuService.save(menu);
+                    savePrivileges(menu.getKey().getMenuCode(), compCode);
+                    updateRole(compCode);
+                });
+                log.info("menu completed.");
+            }
+        } catch (IOException e) {
+            log.error("saveMenu : " + e.getMessage());
+        }
     }
 
     private void savePrivileges(String menuCode, String compCode) {
@@ -89,6 +133,126 @@ public class CompanyInfoServiceImpl implements CompanyInfoService {
                 p.setAllow(true);
                 privilegeMenuRepo.save(p);
             });
+        }
+    }
+
+    private void saveDepartment(File file, String compCode) {
+        try {
+            log.info("department starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<Department>>() {
+                }.getType();
+                List<Department> list = Util1.gson.fromJson(reader, type);
+                list.forEach(d -> {
+                    d.getKey().setCompCode(compCode);
+                    departmentService.save(d);
+                });
+                log.info("department completed.");
+            }
+
+        } catch (Exception e) {
+            log.error("saveDepartment : " + e.getMessage());
+        }
+    }
+
+    private void saveSysProperty(File file, String compCode) {
+        try {
+            log.info("system property starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<HashMap<String, String>>() {
+                }.getType();
+                HashMap<String, String> hm = Util1.gson.fromJson(reader, type);
+                hm.forEach((key, value) -> {
+                    SystemProperty p = new SystemProperty();
+                    PropertyKey pk = new PropertyKey();
+                    pk.setCompCode(compCode);
+                    pk.setPropKey(key);
+                    p.setPropValue(value);
+                    p.setKey(pk);
+                    systemPropertyRepo.save(p);
+                });
+                log.info("system property completed.");
+            }
+
+        } catch (Exception e) {
+            log.error("saveSysProperty : " + e.getMessage());
+        }
+    }
+
+    private void saveAccSetting(File file, String compCode) {
+        try {
+            log.info("account setting starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<AccSetting>>() {
+                }.getType();
+                List<AccSetting> list = Util1.gson.fromJson(reader, type);
+                list.forEach(d -> {
+                    d.getKey().setCompCode(compCode);
+                    webRepo.save(d).subscribe();
+                });
+                log.info("account setting completed.");
+            }
+
+        } catch (Exception e) {
+            log.error("saveAccSetting : " + e.getMessage());
+        }
+    }
+
+    private void saveLocation(File file, String compCode) {
+        try {
+            log.info("location starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<Location>>() {
+                }.getType();
+                List<Location> list = Util1.gson.fromJson(reader, type);
+                list.forEach(d -> {
+                    d.getKey().setCompCode(compCode);
+                    webRepo.save(d).subscribe();
+                });
+                log.info("location completed.");
+            }
+        } catch (Exception e) {
+            log.error("saveLocation : " + e.getMessage());
+        }
+    }
+
+    private void saveDepartmentA(File file, String compCode) {
+        try {
+            log.info("department account starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<DepartmentA>>() {
+                }.getType();
+                List<DepartmentA> list = Util1.gson.fromJson(reader, type);
+                list.forEach(d -> {
+                    d.getKey().setCompCode(compCode);
+                    webRepo.save(d).subscribe();
+                });
+                log.info("department account completed.");
+            }
+        } catch (Exception e) {
+            log.error("saveDepartmentA : " + e.getMessage());
+        }
+    }
+
+    private void saveCOA(File file, String compCode,String createdBy) {
+        try {
+            log.info("coa starting...");
+            try (FileReader reader = new FileReader(file)) {
+                Type type = new TypeToken<List<ChartOfAccount>>() {
+                }.getType();
+                List<ChartOfAccount> list = Util1.gson.fromJson(reader, type);
+                list.forEach(d -> {
+                    d.getKey().setCompCode(compCode);
+                    d.setCreatedBy(createdBy);
+                    d.setCreatedDate(LocalDateTime.now());
+                    d.setActive(true);
+                    d.setOption("USR");
+                    webRepo.save(d).subscribe();
+                });
+                log.info("coa completed.");
+            }
+        } catch (Exception e) {
+            log.error("saveCOA : " + e.getMessage());
         }
     }
 

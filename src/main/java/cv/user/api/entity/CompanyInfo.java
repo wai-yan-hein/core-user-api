@@ -51,4 +51,8 @@ public class CompanyInfo {
     private String securityCode;
     @Transient
     private String exampleCompany;
+    @Transient
+    private Boolean updateMenu;
+    @Transient
+    private String token;
 }

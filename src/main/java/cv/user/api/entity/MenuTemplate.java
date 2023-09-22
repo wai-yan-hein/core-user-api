@@ -20,7 +20,7 @@ public class MenuTemplate {
     @Column(name = "menu_url")
     private String menuUrl;
     @Column(name = "parent_menu_id")
-    private String parentMenuId;
+    private Integer parentMenuId;
     @Column(name = "menu_type")
     private String menuType;
     @Column(name = "account")

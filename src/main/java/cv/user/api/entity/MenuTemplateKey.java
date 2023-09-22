@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Embeddable
 public class MenuTemplateKey implements Serializable {
     @Column(name = "menu_id")
-    private String menuId;
+    private Integer menuId;
     @Column(name = "bus_id")
     private Integer busId;
 }

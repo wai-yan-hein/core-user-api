@@ -147,7 +147,7 @@ public class UserController {
 
     @GetMapping("/getPrivilegeRoleMenuTree")
     public Flux<?> getPrivilegeRoleMenuTree(@RequestParam String roleCode, @RequestParam String compCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode, true);
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         return Flux.fromIterable(menus);
     }
 
@@ -308,18 +308,18 @@ public class UserController {
         return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode, boolean privilege) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode, privilege);
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, true);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getRoleMenuChild(role, privilege);
+                getRoleMenuChild(role, true);
             }
         }
         return roles;
     }
 
     private List<VRoleMenu> getMenu(String roleCode, String compCode) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "1", compCode, false);
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, false);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
                 getMenuChild(role, false);
@@ -349,7 +349,7 @@ public class UserController {
     }
 
     private List<Menu> getMenuTree(String compCode) {
-        List<Menu> menus = menuRepo.getMenuChild("1", compCode);
+        List<Menu> menus = menuRepo.getMenuChild("#", compCode);
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
                 getMenuChild(m);
