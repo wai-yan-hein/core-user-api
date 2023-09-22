@@ -353,8 +353,7 @@ public class UserController {
         if (!menus.isEmpty()) {
             for (Menu m : menus) {
                 getMenuChild(m);
-            }.
-            .
+            }
         }
         return menus;
     }
