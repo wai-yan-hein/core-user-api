@@ -1,7 +1,13 @@
-package cv.user.api.auth;
+package cv.user.api.controller;
 
+import cv.user.api.auth.AuthenticationRequest;
+import cv.user.api.auth.AuthenticationResponse;
+import cv.user.api.auth.AuthenticationService;
 import cv.user.api.common.Util1;
+import cv.user.api.entity.AppUser;
+import cv.user.api.dto.AppUserDTO;
 import cv.user.api.entity.MachineInfo;
+import cv.user.api.repo.AppUserRepo;
 import cv.user.api.repo.MachineInfoRepo;
 import cv.user.api.service.MachineService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/auth")
@@ -21,6 +29,20 @@ public class AuthenticationController {
     private final AuthenticationService service;
     private final MachineService machineService;
     private final MachineInfoRepo machineInfoRepo;
+    private final AppUserRepo userRepo;
+
+    @GetMapping("/login")
+    public Mono<ResponseEntity<?>> login(@RequestParam String userName,
+                                         @RequestParam String password) {
+        List<AppUser> list = userRepo.login(userName, password);
+        if (list.isEmpty()) {
+            return Mono.just(ResponseEntity.notFound().build());
+        }
+        AppUser user = list.get(0);
+        AppUserDTO dto = user.buildUserResponseDTO();
+        dto.setAuthResponse(service.authenticateByUser(user));
+        return Mono.just(ResponseEntity.ok(dto));
+    }
 
     @PostMapping("/authenticate")
     public Mono<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {

@@ -1,6 +1,7 @@
 package cv.user.api.auth;
 
 import cv.user.api.common.Util1;
+import cv.user.api.entity.AppUser;
 import cv.user.api.entity.MachineInfo;
 import cv.user.api.entity.Token;
 import cv.user.api.entity.TokenType;
@@ -22,7 +23,7 @@ public class AuthenticationService {
     private final JWTReactiveAuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        String serialNo =Util1.cleanStr(request.getSerialNo());
+        String serialNo = Util1.cleanStr(request.getSerialNo());
         var user = repository.findBySerialNo(serialNo).orElse(null);
         if (user == null) {
             return AuthenticationResponse.builder().message("Your machine need register.").build();
@@ -33,8 +34,8 @@ public class AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(serialNo, request.getPassword()));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken.getAccessToken());
+        revokeAllMachineTokens(user);
+        saveMachineToken(user, jwtToken.getAccessToken());
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken.getAccessToken())
                 .accessTokenExpired(jwtToken.getAccessTokenExpired())
@@ -44,12 +45,27 @@ public class AuthenticationService {
                 .build();
     }
 
-    private void saveUserToken(MachineInfo mac, String jwtToken) {
+    public AuthenticationResponse authenticateByUser(AppUser user) {
+        String userName = user.getUsername();
+        String password = user.getPassword();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken.getAccessToken())
+                .accessTokenExpired(jwtToken.getAccessTokenExpired())
+                .refreshToken(refreshToken.getRefreshToken())
+                .refreshTokenExpired(refreshToken.getRefreshTokenExpired())
+                .build();
+    }
+
+    private void saveMachineToken(MachineInfo mac, String jwtToken) {
         var token = Token.builder().macId(mac.getMacId()).token(jwtToken).tokenType(TokenType.BEARER.name()).expired(false).revoked(false).build();
         tokenRepo.save(token);
     }
 
-    private void revokeAllUserTokens(MachineInfo info) {
+
+    private void revokeAllMachineTokens(MachineInfo info) {
         var validUserTokens = tokenRepo.findAllValidTokenByMacId(info.getMacId());
         if (validUserTokens.isEmpty()) return;
         validUserTokens.forEach(token -> {

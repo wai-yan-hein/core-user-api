@@ -31,10 +31,11 @@ public class RoleServiceImpl implements RoleService {
             String roleCode = getRoleCode();
             role.setRoleCode(roleCode);
             String exampleRole = role.getExampleRole();
+            String compCode = role.getCompCode();
             if (!Util1.isNullOrEmpty(exampleRole)) {
                 createMenu(roleCode, exampleRole);
                 createCompany(roleCode, exampleRole);
-                createRoleProperty(roleCode, exampleRole);
+                createRoleProperty(roleCode, exampleRole,compCode);
             }
         }
         return repo.save(role);
@@ -81,8 +82,8 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
-    private void createRoleProperty(String roleCode, String exampleRole) {
-        List<RoleProperty> property = rolePropertyRepo.getRoleProperty(exampleRole);
+    private void createRoleProperty(String roleCode, String exampleRole,String compCode) {
+        List<RoleProperty> property = rolePropertyRepo.getRoleProperty(exampleRole,compCode);
         for (RoleProperty p : property) {
             RoleProperty role = new RoleProperty();
             RolePropertyKey key = new RolePropertyKey();

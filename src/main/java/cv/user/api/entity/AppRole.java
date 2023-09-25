@@ -1,12 +1,10 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Entity
@@ -22,4 +20,6 @@ public class AppRole {
     private String exampleRole;
     @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedDate;
+    @Transient
+    private String compCode;
 }

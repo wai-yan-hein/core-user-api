@@ -1,20 +1,27 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import cv.user.api.dto.AppUserDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Entity
 @Table(name = "appuser")
-public class AppUser  {
+public class AppUser implements UserDetails {
     @Id
     @Column(name = "user_code")
     private String userCode;
@@ -38,4 +45,53 @@ public class AppUser  {
     private LocalDateTime updatedDate;
     @Column(name = "loc_code")
     private String locCode;
+
+    public AppUserDTO buildUserResponseDTO() {
+        return AppUserDTO.builder()
+                .userCode(getUserCode())
+                .userName(getUsername())
+                .userShortName(getUserShortName())
+                .email(getEmail())
+                .roleCode(getRoleCode())
+                .deptId(getDeptId())
+                .locCode(getLocCode())
+                .build();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
