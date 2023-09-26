@@ -151,7 +151,7 @@ public class UserController {
 
     @GetMapping("/getPrivilegeRoleMenuTree")
     public Flux<?> getPrivilegeRoleMenuTree(@RequestParam String roleCode, @RequestParam String compCode) {
-        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode, true);
+        List<VRoleMenu> menus = getRoleMenuTree(roleCode, compCode);
         return Flux.fromIterable(menus);
     }
 
@@ -208,8 +208,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/getRoleProperty")
-    public Flux<?> getRoleProperty(@RequestParam String roleCode) {
-        return Flux.fromIterable(rolePropertyRepo.getRoleProperty(roleCode));
+    public Flux<?> getRoleProperty(@RequestParam String roleCode, @RequestParam String compCode) {
+        return Flux.fromIterable(rolePropertyRepo.getRoleProperty(roleCode, compCode));
     }
 
     @GetMapping(path = "/getRoleCompany")
@@ -218,7 +218,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/getPrivilegeRoleCompany")
-    public Flux<?> getPRoleCompany(@RequestParam String roleCode) {
+    public Flux<?> getPrivilegeRoleCompany(@RequestParam String roleCode) {
         return Flux.fromIterable(vRoleCompanyService.getPrivilegeCompany(roleCode)).onErrorResume(throwable -> Flux.empty());
     }
 
@@ -291,7 +291,7 @@ public class UserController {
                 hm.put(p.getKey().getPropKey(), p.getPropValue());
             }
         }
-        List<RoleProperty> roleProperty = rolePropertyRepo.getRoleProperty(roleCode);
+        List<RoleProperty> roleProperty = rolePropertyRepo.getRoleProperty(roleCode, compCode);
         if (!roleProperty.isEmpty()) {
             for (RoleProperty rp : roleProperty) {
                 String value = rp.getPropValue();
@@ -312,11 +312,11 @@ public class UserController {
         return Mono.just(hm);
     }
 
-    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode, boolean privilege) {
-        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, privilege);
+    private List<VRoleMenu> getRoleMenuTree(String roleCode, String compCode) {
+        List<VRoleMenu> roles = vRoleMenuService.getMenu(roleCode, "#", compCode, true);
         if (!roles.isEmpty()) {
             for (VRoleMenu role : roles) {
-                getRoleMenuChild(role, privilege);
+                getRoleMenuChild(role, true);
             }
         }
         return roles;
