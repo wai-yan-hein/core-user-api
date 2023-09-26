@@ -1,6 +1,8 @@
 package cv.user.api.controller;
 
-import cv.user.api.common.*;
+import cv.user.api.common.UserFilter;
+import cv.user.api.common.Util1;
+import cv.user.api.common.YearEnd;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
 import cv.user.api.service.*;
@@ -75,6 +77,8 @@ public class UserController {
     private VRoleMenuService vRoleMenuService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private CountryService countryService;
 
     @GetMapping("/hello")
     public Mono<?> hello() {
@@ -548,5 +552,15 @@ public class UserController {
     @PostMapping("/findExchange")
     public Mono<?> findExchange(@RequestBody ExchangeKey key) {
         return Mono.justOrEmpty(exchangeRateService.findById(key));
+    }
+
+    @GetMapping("/getCountry")
+    public Flux<?> getCountry() {
+        return Flux.fromIterable(countryService.getCountry()).onErrorResume((e) -> Flux.empty());
+    }
+
+    @GetMapping("/findCountry")
+    public Mono<Country> findCountry(@RequestParam String id) {
+        return Mono.justOrEmpty(countryService.findCountry(id)).onErrorResume((e) -> Mono.empty());
     }
 }
