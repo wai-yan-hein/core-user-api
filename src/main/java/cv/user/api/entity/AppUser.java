@@ -45,6 +45,8 @@ public class AppUser implements UserDetails {
     private LocalDateTime updatedDate;
     @Column(name = "loc_code")
     private String locCode;
+    @Column(name = "dept_code")
+    private String deptCode;
 
     public AppUserDTO buildUserResponseDTO() {
         return AppUserDTO.builder()

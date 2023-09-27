@@ -77,6 +77,8 @@ public class UserController {
     private VRoleMenuService vRoleMenuService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private CountryService countryService;
 
     @GetMapping("/hello")
     public Mono<?> hello() {
@@ -550,5 +552,15 @@ public class UserController {
     @PostMapping("/findExchange")
     public Mono<?> findExchange(@RequestBody ExchangeKey key) {
         return Mono.justOrEmpty(exchangeRateService.findById(key));
+    }
+
+    @GetMapping("/getCountry")
+    public Flux<?> getCountry() {
+        return Flux.fromIterable(countryService.getCountry()).onErrorResume((e) -> Flux.empty());
+    }
+
+    @GetMapping("/findCountry")
+    public Mono<Country> findCountry(@RequestParam String id) {
+        return Mono.justOrEmpty(countryService.findCountry(id)).onErrorResume((e) -> Mono.empty());
     }
 }
