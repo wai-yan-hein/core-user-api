@@ -26,7 +26,7 @@ public class AppUser implements UserDetails {
     @Column(name = "user_code")
     private String userCode;
     @Column(name = "user_name")
-    private String userName;
+    private String userLongName;
     @Column(name = "user_short_name")
     private String userShortName;
     @Column(name = "email")
@@ -49,6 +49,7 @@ public class AppUser implements UserDetails {
     public AppUserDTO buildUserResponseDTO() {
         return AppUserDTO.builder()
                 .userCode(getUserCode())
+                .userName(getUserLongName())
                 .userName(getUsername())
                 .userShortName(getUserShortName())
                 .email(getEmail())
@@ -72,7 +73,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return userLongName;
     }
 
     @Override

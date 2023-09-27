@@ -1,6 +1,8 @@
 package cv.user.api.controller;
 
-import cv.user.api.common.*;
+import cv.user.api.common.UserFilter;
+import cv.user.api.common.Util1;
+import cv.user.api.common.YearEnd;
 import cv.user.api.entity.*;
 import cv.user.api.repo.*;
 import cv.user.api.service.*;
@@ -131,7 +133,7 @@ public class UserController {
 
     @GetMapping("/getAppUser")
     public Flux<?> getAppUser() {
-        return Flux.fromIterable(userRepo.findAll());
+        return Flux.fromIterable(userRepo.findAll()).onErrorResume(throwable -> Flux.empty());
     }
 
     @GetMapping("/findAppUser")
