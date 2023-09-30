@@ -188,6 +188,23 @@ add column os_name varchar(255) null after mac_address,
 add column os_version varchar(255) null after os_name,
 add column os_arch varchar(255) null after os_version;
 
+alter table appuser
+add column dept_code varchar(15) null after loc_code;
+
+create table date_lock (
+  lock_code varchar(15) not null,
+  comp_code varchar(15) not null,
+  remark varchar(255) null,
+  date_lock bit(0) not null default 0,
+  start_date date not null,
+  end_date date not null,
+  created_by varchar(15) not null,
+  updated_by varchar(15) null,
+  updated_date timestamp not null,
+  created_date timestamp not null,
+  primary key (lock_code, comp_code));
+
+
 #for hps
 insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)
 select ex_code, comp_code, ex_date, 1, home_cur, ex_rate, exchange_cur, created_date, created_by, updated_date, updated_by, deleted from cv_acc_hps.cur_exchange;
