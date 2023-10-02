@@ -68,6 +68,8 @@ public class UserController {
     @Autowired
     private ProjectRepo projectRepo;
     @Autowired
+    private DateLockRepo dateLockRepo;
+    @Autowired
     private SeqRepo seqRepo;
     @Autowired
     private VRoleCompanyService vRoleCompanyService;
@@ -79,6 +81,8 @@ public class UserController {
     private DepartmentService departmentService;
     @Autowired
     private CountryService countryService;
+    @Autowired
+    private DateLockService dateLockService;
 
     @GetMapping("/hello")
     public Mono<?> hello() {
@@ -544,6 +548,11 @@ public class UserController {
         return Flux.fromIterable(systemPropertyRepo.getSystemPropertyByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
+    @GetMapping("/getDateLockByDate")
+    public Flux<?> getDateLockByDate(@RequestParam String updatedDate) {
+        return Flux.fromIterable(dateLockRepo.getDateLockByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
+    }
+
     @GetMapping("/getExchangeRate")
     public Flux<?> getExchangeRate(@RequestParam String compCode) {
         return Flux.fromIterable(exchangeRateService.getExchangeRate(compCode)).onErrorResume((e) -> Flux.empty());
@@ -562,5 +571,19 @@ public class UserController {
     @GetMapping("/findCountry")
     public Mono<Country> findCountry(@RequestParam String id) {
         return Mono.justOrEmpty(countryService.findCountry(id)).onErrorResume((e) -> Mono.empty());
+    }
+
+    @GetMapping("/getDateLock")
+    public Flux<?> getDateLock(@RequestParam String compCode) {
+        return Flux.fromIterable(dateLockService.findAll(compCode)).map(dateLock -> {
+            dateLock.setCreatedDateTime(Util1.toZonedDateTime(dateLock.getCreatedDate()));
+            dateLock.setUpdatedDateTime(Util1.toZonedDateTime(dateLock.getUpdatedDate()));
+            return dateLock;
+        }).onErrorResume(throwable -> Flux.empty());
+    }
+
+    @PostMapping("/saveDateLock")
+    public Mono<?> saveDateLock(@RequestBody DateLock dl) {
+        return Mono.just(dateLockService.save(dl));
     }
 }
