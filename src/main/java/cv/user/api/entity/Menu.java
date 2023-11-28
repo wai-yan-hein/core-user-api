@@ -1,12 +1,10 @@
 package cv.user.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -34,6 +32,8 @@ public class Menu  {
     private Integer orderBy;
     @Column(name = "updated_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedDate;
+    @Column(name = "menu_version")
+    private Integer menuVersion;
     @Transient
     private List<Menu> child;
 }

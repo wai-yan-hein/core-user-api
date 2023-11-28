@@ -111,12 +111,25 @@ public class UserController {
         return Flux.fromIterable(machineInfoRepo.findAll()).onErrorResume((throwable -> Flux.empty()));
     }
 
+    @DeleteMapping("/deleteMac")
+    public Mono<?> deleteMac(@RequestParam Integer macId) {
+        machineInfoRepo.deleteById(macId);
+        return Mono.just(true);
+    }
+
+    @GetMapping("/updateAllMachine")
+    public Mono<?> updateAllMachine(@RequestParam boolean update) {
+        machineInfoRepo.updateAllMachine(update);
+        return Mono.just(true);
+    }
+
+
     @PostMapping("/saveMachine")
     public Mono<?> saveMachine(@RequestBody MachineInfo machineInfo) {
         machineInfo.setSerialNo(Util1.cleanStr(machineInfo.getSerialNo()));
+        machineInfo.setUpdatedDate(LocalDateTime.now());
         return Mono.just(machineInfoRepo.save(machineInfo));
     }
-
     @PostMapping("/saveUser")
     public Mono<AppUser> saveUser(@RequestBody AppUser user) {
         return Mono.just(appUserService.save(user));
@@ -505,6 +518,7 @@ public class UserController {
 
     @GetMapping("/getMachineInfoByDate")
     public Flux<?> getMachineInfoByDate(@RequestParam String updatedDate) {
+log.info(updatedDate);
         return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
