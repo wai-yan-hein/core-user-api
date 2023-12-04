@@ -3,10 +3,7 @@ package cv.user.api.controller;
 import cv.user.api.common.ReturnObject;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -31,7 +28,8 @@ public class FileDownloadController {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "core-account.jar");
+            headers.setContentDisposition(ContentDisposition.builder("inline").filename(program).build());
+            //headers.setContentDispositionFormData("attachment", "core-account.jar");
 
             Resource resource = new FileSystemResource(file);
 
