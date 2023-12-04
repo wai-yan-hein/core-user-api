@@ -19,6 +19,7 @@ public class VRoleMenu {
     private String parentMenuCode;
     private Integer orderBy;
     private String compCode;
+    private int menuVersion;
     private List<VRoleMenu> child;
 
 }
