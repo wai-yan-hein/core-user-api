@@ -179,10 +179,6 @@ add column comp_code varchar(15) not null after deleted,
 drop primary key,
 add primary key (dept_id, comp_code);
 
-set sql_safe_updates =0;
-update department
-set comp_code ='0010010';
-
 alter table machine_info
 add column os_name varchar(255) null after mac_address,
 add column os_version varchar(255) null after os_name,
