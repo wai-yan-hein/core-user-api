@@ -518,7 +518,6 @@ public class UserController {
 
     @GetMapping("/getMachineInfoByDate")
     public Flux<?> getMachineInfoByDate(@RequestParam String updatedDate) {
-log.info(updatedDate);
         return Flux.fromIterable(machineInfoRepo.getMachineInfoByDate(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
     }
 
