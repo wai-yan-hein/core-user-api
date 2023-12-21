@@ -83,6 +83,8 @@ public class UserController {
     private CountryService countryService;
     @Autowired
     private DateLockService dateLockService;
+    @Autowired
+    private LanguageService languageService;
 
     @GetMapping("/hello")
     public Mono<?> hello() {
@@ -130,6 +132,7 @@ public class UserController {
         machineInfo.setUpdatedDate(LocalDateTime.now());
         return Mono.just(machineInfoRepo.save(machineInfo));
     }
+
     @PostMapping("/saveUser")
     public Mono<AppUser> saveUser(@RequestBody AppUser user) {
         return Mono.just(appUserService.save(user));
@@ -598,5 +601,28 @@ public class UserController {
     @PostMapping("/saveDateLock")
     public Mono<?> saveDateLock(@RequestBody DateLock dl) {
         return Mono.just(dateLockService.save(dl));
+    }
+
+    @PostMapping(path = "/saveLanguage")
+    public Mono<Language> saveOrderStatus(@RequestBody Language language) {
+        language.setUpdatedDate(LocalDateTime.now());
+        Language b = languageService.save(language);
+        return Mono.justOrEmpty(b);
+    }
+
+    @GetMapping(path = "/getLanguage")
+    public Flux<?> getLanguage(@RequestParam String compCode) {
+        return Flux.fromIterable(languageService.findAll(compCode));
+    }
+
+    @GetMapping(path = "/getUpdateLanguage")
+    public Flux<?> getUpdateLanguage(@RequestParam String updatedDate) {
+        return Flux.fromIterable(languageService.getLanguage(Util1.toLocalDateTime(updatedDate))).onErrorResume(throwable -> Flux.empty());
+    }
+
+    @PostMapping(path = "/findLanguage")
+    public Mono<Language> findLanguage(@RequestBody LanguageKey key) {
+        Language b = languageService.findById(key);
+        return Mono.justOrEmpty(b);
     }
 }
