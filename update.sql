@@ -203,6 +203,16 @@ create table date_lock (
 alter table menu
 add column menu_version int null after updated_date;
 
+create table language (
+  lan_type varchar(20) not null,
+  lan_key varchar(45) not null,
+  lan_value varchar(255) not null,
+  created_date timestamp not null default current_timestamp(),
+  updated_date timestamp null default current_timestamp(),
+  comp_code varchar(45) not null,
+  primary key (lan_type,lan_key)
+) engine=innodb default charset=utf8mb3;
+
 #for hps
 insert into cv_user_hps.exchange_rate(ex_code, comp_code, ex_date, home_factor, home_cur, target_factor, target_cur, created_date, created_by, updated_date, updated_by, deleted)
 select ex_code, comp_code, ex_date, 1, home_cur, ex_rate, exchange_cur, created_date, created_by, updated_date, updated_by, deleted from cv_acc_hps.cur_exchange;
